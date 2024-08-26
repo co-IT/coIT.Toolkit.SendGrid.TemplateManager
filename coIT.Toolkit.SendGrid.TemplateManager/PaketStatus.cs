@@ -19,8 +19,7 @@ public partial class PaketStatus : UserControl
   {
     ctrl_Table.RowCount += 1;
     ctrl_Table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-    ctrl_Table.Controls.Add(new Label { Text = Enum.GetName(difficulty) }, 0,
-      ctrl_Table.RowCount - 1);
+    ctrl_Table.Controls.Add(new Label { Text = Enum.GetName(difficulty) }, 0, ctrl_Table.RowCount - 1);
 
     var hintergrundfarbe = aktuelleAnzahl == benoetigteAnzahl ? Color.LawnGreen : Color.IndianRed;
 
@@ -35,15 +34,9 @@ public partial class PaketStatus : UserControl
   {
     ctrl_Table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
     var headerFont = new Font(FontFamily.GenericSansSerif, 9, FontStyle.Bold);
-    ctrl_Table.Controls.Add(
-      new Label { Text = "Schwierigkeit", Font = headerFont }, 0,
-      ctrl_Table.RowCount - 1);
-    ctrl_Table.Controls.Add(
-      new Label { Text = "Ist", Font = headerFont }, 1,
-      ctrl_Table.RowCount - 1);
-    ctrl_Table.Controls.Add(
-      new Label { Text = "Soll", Font = headerFont }, 2,
-      ctrl_Table.RowCount - 1);
+    ctrl_Table.Controls.Add(new Label { Text = "Schwierigkeit", Font = headerFont }, 0, ctrl_Table.RowCount - 1);
+    ctrl_Table.Controls.Add(new Label { Text = "Ist", Font = headerFont }, 1, ctrl_Table.RowCount - 1);
+    ctrl_Table.Controls.Add(new Label { Text = "Soll", Font = headerFont }, 2, ctrl_Table.RowCount - 1);
   }
 
   private void SetupTable()
@@ -58,6 +51,9 @@ public record PaketStatusDto
 {
   public string PaketName { get; set; }
 
-  public IEnumerable<(PhishingMailLevelOfDifficulty Difficulty, byte AktuelleAnzahl, byte BenoetigteAnzahl)>
-    Zuordnungen { get; set; }
+  public IEnumerable<(
+    PhishingMailLevelOfDifficulty Difficulty,
+    byte AktuelleAnzahl,
+    byte BenoetigteAnzahl
+  )> Zuordnungen { get; set; }
 }

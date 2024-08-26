@@ -25,7 +25,6 @@ public record PhishingMailEinstufung
   public string TrackingLinkDomain { get; set; }
   public string TrackingLinkPfad { get; set; }
 
-
   [JsonIgnore]
   public int Bewertung
   {

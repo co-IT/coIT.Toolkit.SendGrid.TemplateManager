@@ -48,8 +48,7 @@ public partial class FormMain : Form
   {
     MeldungAnzeigen("Lade Inhalte asynchron nach.");
 
-    var service = SendGridService
-      .CreateWithApiKeyFromEnvironment();
+    var service = SendGridService.CreateWithApiKeyFromEnvironment();
 
     if (service.IsFailure)
       return service;
@@ -57,9 +56,7 @@ public partial class FormMain : Form
     var gesamt = _alleTemplates.Count;
     var verarbeitet = 0;
 
-    var prozente = Enumerable
-      .Range(1, 9)
-      .ToDictionary(k => gesamt / 10 * k, v => 100 / 10 * v);
+    var prozente = Enumerable.Range(1, 9).ToDictionary(k => gesamt / 10 * k, v => 100 / 10 * v);
     prozente.Add(gesamt, 100);
 
     foreach (var template in _alleTemplates)
@@ -68,8 +65,7 @@ public partial class FormMain : Form
       var versionId = template.SendGridTemplate.VersionId;
 
       await service
-        .Value
-        .GetTemplateContent(templateId, versionId, ct)
+        .Value.GetTemplateContent(templateId, versionId, ct)
         .Tap(inhalt =>
         {
           template.HtmlContent = inhalt.HtmlContent;
@@ -79,7 +75,8 @@ public partial class FormMain : Form
         .TapError(FehlerAnzeigen);
 
       verarbeitet += 1;
-      if (prozente.TryGetValue(verarbeitet, out var prozent)) MeldungAnzeigen($"{prozent:N0}% der Inhalte geladen");
+      if (prozente.TryGetValue(verarbeitet, out var prozent))
+        MeldungAnzeigen($"{prozent:N0}% der Inhalte geladen");
 
       if (ct.IsCancellationRequested)
         return Result.Failure("Aktion abgebrochen");
@@ -124,13 +121,17 @@ public partial class FormMain : Form
       .Select(t => t.ToTabellenEintrag())
       .ToList();
 
-    ctrlTemplatesListe.InvokeIfRequired(() => ctrlTemplatesListe.DataSource = sortiertUndGefiltert.AsSortableBindingList());
+    ctrlTemplatesListe.InvokeIfRequired(
+      () => ctrlTemplatesListe.DataSource = sortiertUndGefiltert.AsSortableBindingList()
+    );
     ctrlTemplatesListe.InvokeIfRequired(TabelleFormatieren);
     ctrlTemplatesListe.InvokeIfRequired(() =>
     {
-      if (ctrlTemplatesListe.Rows.Count > 0
-          && ctrlTemplatesListe.Rows.Count >= _selektierteZeile
-          && _selektierteZeile > 1)
+      if (
+        ctrlTemplatesListe.Rows.Count > 0
+        && ctrlTemplatesListe.Rows.Count >= _selektierteZeile
+        && _selektierteZeile > 1
+      )
         ctrlTemplatesListe.Rows[_selektierteZeile].Selected = true;
     });
   }
@@ -143,45 +144,51 @@ public partial class FormMain : Form
     templates = templates.Where(t => !t.Archiviert);
     MeldungAnzeigen($"ohne archivierte Templates: {templates.Count()}");
 
-
     if (!string.IsNullOrWhiteSpace(ctrlTemplateFilterName.Text.Trim()))
     {
-      templates = templates
-        .Where(t => (t.SendGridTemplate?.Name ?? string.Empty)
-          .Contains(ctrlTemplateFilterName.Text.Trim(), StringComparison.InvariantCultureIgnoreCase));
+      templates = templates.Where(t =>
+        (t.SendGridTemplate?.Name ?? string.Empty).Contains(
+          ctrlTemplateFilterName.Text.Trim(),
+          StringComparison.InvariantCultureIgnoreCase
+        )
+      );
 
       MeldungAnzeigen($"nach Namen-Filterung: {templates.Count()}");
     }
 
     if (!string.IsNullOrWhiteSpace(ctrlTemplateFilterSubject.Text.Trim()))
     {
-      templates = templates
-        .Where(t => (t.SendGridTemplate?.Subject ?? string.Empty)
-          .Contains(ctrlTemplateFilterSubject.Text.Trim(), StringComparison.InvariantCultureIgnoreCase));
+      templates = templates.Where(t =>
+        (t.SendGridTemplate?.Subject ?? string.Empty).Contains(
+          ctrlTemplateFilterSubject.Text.Trim(),
+          StringComparison.InvariantCultureIgnoreCase
+        )
+      );
       MeldungAnzeigen($"nach Subject-Filterung: {templates.Count()}");
     }
 
     if (!string.IsNullOrWhiteSpace(ctrlTemplateFilterInhalt.Text.Trim()))
     {
-      templates = templates
-        .Where(t => (t.PlainContent ?? string.Empty)
-          .Contains(ctrlTemplateFilterInhalt.Text.Trim(), StringComparison.InvariantCultureIgnoreCase));
+      templates = templates.Where(t =>
+        (t.PlainContent ?? string.Empty).Contains(
+          ctrlTemplateFilterInhalt.Text.Trim(),
+          StringComparison.InvariantCultureIgnoreCase
+        )
+      );
       MeldungAnzeigen($"nach Inhalt-Filterung: {templates.Count()}");
     }
 
     if (!string.IsNullOrWhiteSpace(ctrlTemplateFilterTags.Text.Trim()))
     {
-      templates = templates
-        .Where(t => t.Tags
-          .Any(tag => tag.Contains(ctrlTemplateFilterTags.Text.Trim(), StringComparison.InvariantCultureIgnoreCase)));
+      templates = templates.Where(t =>
+        t.Tags.Any(tag => tag.Contains(ctrlTemplateFilterTags.Text.Trim(), StringComparison.InvariantCultureIgnoreCase))
+      );
       MeldungAnzeigen($"nach Tag-Filterung: {templates.Count()}");
     }
 
     if (ctrlFilterPaket.SelectedItem != null)
     {
-      templates = templates
-        .Where(t => t.Pakete
-          .Any(paket => paket == (Paket)ctrlFilterPaket.SelectedItem));
+      templates = templates.Where(t => t.Pakete.Any(paket => paket == (Paket)ctrlFilterPaket.SelectedItem));
       MeldungAnzeigen($"nach Paket-Filterung: {templates.Count()}");
     }
 
@@ -189,7 +196,7 @@ public partial class FormMain : Form
     {
       "eingestuft" => templates.Where(t => t.Einstufung is not null),
       "einzustufen" => templates.Where(t => t.Einstufung is null),
-      _ => templates
+      _ => templates,
     };
 
     MeldungAnzeigen($"nach Status-Filter: {templates.Count()}");
@@ -218,16 +225,11 @@ public partial class FormMain : Form
     ctrlTemplatesListe.Columns["PreviewUri"].Visible = false;
     ctrlTemplatesListe.Columns["VersionId"].Visible = false;
     ctrlTemplatesListe.Columns["LastUpdated"].DefaultCellStyle.Format = "dd.MM.yyyy hh:mm";
-    ctrlTemplatesListe.Columns["LastUpdated"].DefaultCellStyle.Alignment =
-      DataGridViewContentAlignment.MiddleRight;
-    ctrlTemplatesListe.Columns["Skala"].DefaultCellStyle.Alignment =
-      DataGridViewContentAlignment.MiddleRight;
-    ctrlTemplatesListe.Columns["Klicks"].DefaultCellStyle.Alignment =
-      DataGridViewContentAlignment.MiddleRight;
-    ctrlTemplatesListe.Columns["Versandt"].DefaultCellStyle.Alignment =
-      DataGridViewContentAlignment.MiddleRight;
-    ctrlTemplatesListe.Columns["Klickquote"].DefaultCellStyle.Alignment =
-      DataGridViewContentAlignment.MiddleRight;
+    ctrlTemplatesListe.Columns["LastUpdated"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+    ctrlTemplatesListe.Columns["Skala"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+    ctrlTemplatesListe.Columns["Klicks"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+    ctrlTemplatesListe.Columns["Versandt"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+    ctrlTemplatesListe.Columns["Klickquote"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
     ctrlTemplatesListe.Columns["Klickquote"].DefaultCellStyle.Format = "p";
   }
 
@@ -237,8 +239,13 @@ public partial class FormMain : Form
 
     return await SendGridService
       .CreateWithApiKeyFromEnvironment()
-      .Map(s => s.GetTemplateContent(_selektiertesTemplate.SendGridTemplate.TemplateId,
-        _selektiertesTemplate.SendGridTemplate.VersionId, _cts.Token))
+      .Map(s =>
+        s.GetTemplateContent(
+          _selektiertesTemplate.SendGridTemplate.TemplateId,
+          _selektiertesTemplate.SendGridTemplate.VersionId,
+          _cts.Token
+        )
+      )
       .TapError(FehlerAnzeigen);
   }
 
@@ -288,7 +295,7 @@ public partial class FormMain : Form
       Arguments = args,
       UseShellExecute = false,
       WindowStyle = ProcessWindowStyle.Normal,
-      CreateNoWindow = false
+      CreateNoWindow = false,
     };
 
     Process.Start(psi);
@@ -307,11 +314,7 @@ public partial class FormMain : Form
     await File.WriteAllTextAsync(file, templateOderFehler.Value.HtmlContent, Encoding.UTF8);
     var args = $"/c start msedge {uri}";
 
-    var psi = new ProcessStartInfo("cmd.exe")
-    {
-      Arguments = args,
-      UseShellExecute = true
-    };
+    var psi = new ProcessStartInfo("cmd.exe") { Arguments = args, UseShellExecute = true };
 
     Process.Start(psi);
   }
@@ -389,23 +392,12 @@ public partial class FormMain : Form
 
   private async Task Taggen(string tag)
   {
-    var bereitsGetaggt = _selektiertesTemplate
-      .Tags
-      .Contains(tag);
+    var bereitsGetaggt = _selektiertesTemplate.Tags.Contains(tag);
 
     if (bereitsGetaggt)
-      _selektiertesTemplate.Tags = _selektiertesTemplate
-        .Tags
-        .Where(p => p != tag)
-        .OrderBy(t => t)
-        .ToList();
+      _selektiertesTemplate.Tags = _selektiertesTemplate.Tags.Where(p => p != tag).OrderBy(t => t).ToList();
     else
-      _selektiertesTemplate.Tags = _selektiertesTemplate
-        .Tags
-        .Concat(new[] { tag })
-        .Distinct()
-        .OrderBy(t => t)
-        .ToList();
+      _selektiertesTemplate.Tags = _selektiertesTemplate.Tags.Concat(new[] { tag }).Distinct().OrderBy(t => t).ToList();
 
     await ManagedTemplateRepository.AktualisiereLokaleKopie(_selektiertesTemplate, CancellationToken.None);
     AktualisiereTabelle();
@@ -418,24 +410,16 @@ public partial class FormMain : Form
 
   private async Task PaketZuordnen(Paket paket)
   {
-    var bereitsZugeordnet = _selektiertesTemplate
-      .Pakete
-      .Contains(paket);
+    var bereitsZugeordnet = _selektiertesTemplate.Pakete.Contains(paket);
 
     if (bereitsZugeordnet)
-      _selektiertesTemplate.Pakete = _selektiertesTemplate
-        .Pakete
-        .Where(p => p != paket)
-        .OrderBy(p => p)
-        .ToList();
+      _selektiertesTemplate.Pakete = _selektiertesTemplate.Pakete.Where(p => p != paket).OrderBy(p => p).ToList();
     else
       _selektiertesTemplate.Pakete = _selektiertesTemplate
-        .Pakete
-        .Concat(new[] { paket })
+        .Pakete.Concat(new[] { paket })
         .Distinct()
         .OrderBy(p => p)
         .ToList();
-
 
     await ManagedTemplateRepository.AktualisiereLokaleKopie(_selektiertesTemplate, CancellationToken.None);
     AktualisiereTabelle();
@@ -464,8 +448,11 @@ public partial class FormMain : Form
   private void ctrlJsonBearbeiten_Click(object sender, EventArgs e)
   {
     ManagedTemplateRepository.EditiereLokaleKopie(_selektiertesTemplate);
-    MessageBox.Show("Nach dem Editieren müssen die lokalen Daten manuell neugeladen werden.", "Hinweis",
-      MessageBoxButtons.OK);
+    MessageBox.Show(
+      "Nach dem Editieren müssen die lokalen Daten manuell neugeladen werden.",
+      "Hinweis",
+      MessageBoxButtons.OK
+    );
   }
 
   private void ctrlTemplatesListe_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
@@ -474,7 +461,12 @@ public partial class FormMain : Form
       return;
 
     Clipboard.SetText(_selektiertesTemplate.SendGridTemplate.TemplateId);
-    MessageBox.Show("Template ID in Zwischenablage kopiert", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+    MessageBox.Show(
+      "Template ID in Zwischenablage kopiert",
+      "Information",
+      MessageBoxButtons.OK,
+      MessageBoxIcon.Information
+    );
   }
 
   private async void ctrlCsvExportCyberLounge_Click(object sender, EventArgs e)
@@ -482,15 +474,23 @@ public partial class FormMain : Form
     var angezeigteTemplates = FilterAnwenden();
     if (angezeigteTemplates.Any(t => t.Absender is null))
     {
-      MessageBox.Show("Es können nur Templates exportiert werden, bei denen der Absender gepflegt ist.",
-        "Aktion nicht möglich", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+      MessageBox.Show(
+        "Es können nur Templates exportiert werden, bei denen der Absender gepflegt ist.",
+        "Aktion nicht möglich",
+        MessageBoxButtons.OK,
+        MessageBoxIcon.Asterisk
+      );
       return;
     }
 
     if (angezeigteTemplates.Any(t => t.Einstufung is null))
     {
-      MessageBox.Show("Es können nur Templates exportiert werden, die eingestuft sind.",
-        "Aktion nicht möglich", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+      MessageBox.Show(
+        "Es können nur Templates exportiert werden, die eingestuft sind.",
+        "Aktion nicht möglich",
+        MessageBoxButtons.OK,
+        MessageBoxIcon.Asterisk
+      );
       return;
     }
 
@@ -511,7 +511,6 @@ public partial class FormMain : Form
     var csvDatei = "../phishing-mails-export.csv";
     await File.WriteAllTextAsync(csvDatei, csvZeilen, Encoding.UTF8, CancellationToken.None);
     MeldungAnzeigen("CSV exportiert: " + csvDatei);
-
 
     var sqlBuilder = new StringBuilder();
     sqlBuilder.AppendLine("BEGIN TRANSACTION;");
@@ -539,8 +538,12 @@ public partial class FormMain : Form
     var datei = "../phishing-mails-import.csv";
 
     if (!File.Exists(datei))
-      MessageBox.Show($"Datei nicht gefunden: {datei}", "Aktion nicht erfolgreich", MessageBoxButtons.OK,
-        MessageBoxIcon.Error);
+      MessageBox.Show(
+        $"Datei nicht gefunden: {datei}",
+        "Aktion nicht erfolgreich",
+        MessageBoxButtons.OK,
+        MessageBoxIcon.Error
+      );
 
     var zeilen = await File.ReadAllLinesAsync(datei, Encoding.UTF8, CancellationToken.None);
 
@@ -556,11 +559,7 @@ public partial class FormMain : Form
       var absenderAdresse = werte[3];
       var absenderName = werte[4];
 
-      template.Absender = new Absender
-      {
-        Name = absenderName,
-        Adresse = absenderAdresse
-      };
+      template.Absender = new Absender { Name = absenderName, Adresse = absenderAdresse };
 
       await ManagedTemplateRepository.AktualisiereLokaleKopie(template, CancellationToken.None);
       MeldungAnzeigen($"{template.Absender}in Template {template.SendGridTemplate.Name} aktualisiert.");
@@ -574,8 +573,12 @@ public partial class FormMain : Form
     var datei = "../phishing-mails-import.csv";
 
     if (!File.Exists(datei))
-      MessageBox.Show("Datei nicht gefunden: " + datei, "Aktion nicht erfolgreich", MessageBoxButtons.OK,
-        MessageBoxIcon.Error);
+      MessageBox.Show(
+        "Datei nicht gefunden: " + datei,
+        "Aktion nicht erfolgreich",
+        MessageBoxButtons.OK,
+        MessageBoxIcon.Error
+      );
 
     var zeilen = await File.ReadAllLinesAsync(datei, Encoding.UTF8, CancellationToken.None);
 
@@ -596,8 +599,12 @@ public partial class FormMain : Form
     var datei = "../klicks.csv";
 
     if (!File.Exists(datei))
-      MessageBox.Show("Datei nicht gefunden: " + datei, "Aktion nicht erfolgreich", MessageBoxButtons.OK,
-        MessageBoxIcon.Error);
+      MessageBox.Show(
+        "Datei nicht gefunden: " + datei,
+        "Aktion nicht erfolgreich",
+        MessageBoxButtons.OK,
+        MessageBoxIcon.Error
+      );
 
     var zeilen = await File.ReadAllLinesAsync(datei, Encoding.UTF8, CancellationToken.None);
 
@@ -629,9 +636,11 @@ public partial class FormMain : Form
 
       var id = zuordnungen[templateId];
 
-      if (versandt.ContainsKey(id)) template.Versandt = versandt[id];
+      if (versandt.ContainsKey(id))
+        template.Versandt = versandt[id];
 
-      if (klicks.ContainsKey(id)) template.Klicks = klicks[id];
+      if (klicks.ContainsKey(id))
+        template.Klicks = klicks[id];
     }
 
     AktualisiereTabelle();
@@ -664,7 +673,8 @@ public partial class FormMain : Form
 
   private void Filtern(KeyEventArgs e)
   {
-    if (e.KeyCode == Keys.Enter) AktualisiereTabelle();
+    if (e.KeyCode == Keys.Enter)
+      AktualisiereTabelle();
   }
 
   private void ctrlFilterStatus_SelectedIndexChanged(object sender, EventArgs e)

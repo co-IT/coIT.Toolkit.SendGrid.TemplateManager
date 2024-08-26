@@ -107,7 +107,7 @@ public static class ManagedTemplateRepository
       Arguments = file,
       UseShellExecute = false,
       WindowStyle = ProcessWindowStyle.Hidden,
-      CreateNoWindow = false
+      CreateNoWindow = false,
     };
 
     Process.Start(psi);

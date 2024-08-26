@@ -7,7 +7,8 @@ public partial class FormSingleTemplate : Form
     InitializeComponent();
   }
 
-  public FormSingleTemplate(ManagedTemplate template) : this()
+  public FormSingleTemplate(ManagedTemplate template)
+    : this()
   {
     Template = template;
   }
@@ -36,7 +37,7 @@ public partial class FormSingleTemplate : Form
       "gesundheitlich-arbeiten.de",
       "apothekernetzwerk.de",
       "anton-schneider-gmbh.de",
-      "bdi-bund.de"
+      "bdi-bund.de",
     };
 
     ctrlEinstufungPersRelevanz.DataSource = Enum.GetValues(typeof(Bewertungsskala));
@@ -113,7 +114,7 @@ public partial class FormSingleTemplate : Form
     {
       Adresse = $"{ctrlAbsenderadresse.Text}{ctrlDomains.SelectedItem}",
       Name = ctrlCVAlsAbsendername.Checked ? string.Empty : ctrlAbsendername.Text,
-      VonCyberVerantwortlichen = ctrlCVAlsAbsendername.Checked
+      VonCyberVerantwortlichen = ctrlCVAlsAbsendername.Checked,
     };
   }
 
@@ -168,7 +169,6 @@ public partial class FormSingleTemplate : Form
       labelAbsendername.Visible = true;
     }
   }
-
 
   private async Task LadeInWebView2(string html)
   {

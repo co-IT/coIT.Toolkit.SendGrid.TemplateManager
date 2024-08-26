@@ -26,19 +26,14 @@ public partial class PaketUebersicht : Form
       var zuordnungen = Enum.GetValues<PhishingMailLevelOfDifficulty>()
         .Select(difficulty =>
         {
-          var aktuelleAnzahl = (byte)templatesInPaket
-            .Count(t => t.Einstufung.Klassifizierung == difficulty);
+          var aktuelleAnzahl = (byte)templatesInPaket.Count(t => t.Einstufung.Klassifizierung == difficulty);
 
           var benoetigteAnzahl = PaketKonfiguration.Konfiguration[paket][difficulty];
 
           return (difficulty, aktuelleAnzahl, benoetigteAnzahl);
         });
 
-      var dto = new PaketStatusDto
-      {
-        PaketName = paketName,
-        Zuordnungen = zuordnungen
-      };
+      var dto = new PaketStatusDto { PaketName = paketName, Zuordnungen = zuordnungen };
 
       ctrl_PaketeLayout.Controls.Add(new PaketStatus(dto));
     }

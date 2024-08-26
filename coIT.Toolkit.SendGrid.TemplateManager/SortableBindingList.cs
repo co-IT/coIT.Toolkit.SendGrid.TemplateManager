@@ -4,16 +4,15 @@ namespace coIT.Toolkit.SendGrid.TemplateManager;
 
 public static class SortableBindingListExtensions
 {
-  public static SortableBindingList<T> AsSortableBindingList<T>(this IEnumerable<T>? originList) where T : class
+  public static SortableBindingList<T> AsSortableBindingList<T>(this IEnumerable<T>? originList)
+    where T : class
   {
-    return originList == null
-      ? new SortableBindingList<T>()
-      : new SortableBindingList<T>(originList.ToList());
+    return originList == null ? new SortableBindingList<T>() : new SortableBindingList<T>(originList.ToList());
   }
 }
 
-public class SortableBindingList<T>
-  : BindingList<T> where T : class
+public class SortableBindingList<T> : BindingList<T>
+  where T : class
 {
   private bool _isSorted;
   private ListSortDirection _sortDirection = ListSortDirection.Ascending;
@@ -22,18 +21,14 @@ public class SortableBindingList<T>
   /// <summary>
   ///   Initializes a new instance of the <see cref="SortableBindingList{T}" /> class.
   /// </summary>
-  public SortableBindingList()
-  {
-  }
+  public SortableBindingList() { }
 
   /// <summary>
   ///   Initializes a new instance of the <see cref="SortableBindingList{T}" /> class.
   /// </summary>
   /// <param name="list">An <see cref="T:System.Collections.Generic.IList`1" /> of items to be contained in the <see cref="T:System.ComponentModel.BindingList`1" />.</param>
   public SortableBindingList(IList<T> list)
-    : base(list)
-  {
-  }
+    : base(list) { }
 
   /// <summary>
   ///   Gets a value indicating whether the list supports sorting.
@@ -76,7 +71,8 @@ public class SortableBindingList<T>
     _sortDirection = direction;
 
     var list = Items as List<T>;
-    if (list == null) return;
+    if (list == null)
+      return;
 
     list.Sort(Compare);
 
@@ -84,7 +80,6 @@ public class SortableBindingList<T>
     //fire an event that the list has been changed.
     OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
   }
-
 
   private int Compare(T lhs, T rhs)
   {
@@ -99,10 +94,14 @@ public class SortableBindingList<T>
   {
     var lhsValue = lhs == null ? null : _sortProperty.GetValue(lhs);
     var rhsValue = rhs == null ? null : _sortProperty.GetValue(rhs);
-    if (lhsValue == null) return rhsValue == null ? 0 : -1; //nulls are equal
-    if (rhsValue == null) return 1; //first has value, second doesn't
-    if (lhsValue is IComparable) return ((IComparable)lhsValue).CompareTo(rhsValue);
-    if (lhsValue.Equals(rhsValue)) return 0; //both are the same
+    if (lhsValue == null)
+      return rhsValue == null ? 0 : -1; //nulls are equal
+    if (rhsValue == null)
+      return 1; //first has value, second doesn't
+    if (lhsValue is IComparable)
+      return ((IComparable)lhsValue).CompareTo(rhsValue);
+    if (lhsValue.Equals(rhsValue))
+      return 0; //both are the same
     //not comparable, compare ToString
     return lhsValue.ToString().CompareTo(rhsValue.ToString());
   }
