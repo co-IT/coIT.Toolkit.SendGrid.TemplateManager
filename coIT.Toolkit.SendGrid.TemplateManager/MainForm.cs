@@ -16,6 +16,7 @@ public partial class MainForm : Form
   private ManagedTemplate _selektiertesTemplate;
   private int _selektierteZeile;
   private Func<ManagedTemplate, object> _sortierung = t => t.SendGridTemplate.Name;
+  private SortableBindingList<TabellenEintrag> _tabellenListe = [];
 
   private readonly EnvironmentManager _environmentManager;
   private ManagedTemplateRepository _managedTemplateRepository;
@@ -129,10 +130,15 @@ public partial class MainForm : Form
       .Select(t => t.ToTabellenEintrag())
       .ToList();
 
-    ctrlTemplatesListe.InvokeIfRequired(
-      () => ctrlTemplatesListe.DataSource = sortiertUndGefiltert.AsSortableBindingList()
-    );
-    ctrlTemplatesListe.InvokeIfRequired(TabelleFormatieren);
+    _tabellenListe.Clear();
+
+    foreach (var tabellenEintrag in sortiertUndGefiltert)
+    {
+      _tabellenListe.Add(tabellenEintrag);
+    }
+
+    _tabellenListe.SortAgain();
+
     ctrlTemplatesListe.InvokeIfRequired(() =>
     {
       if (
@@ -691,6 +697,9 @@ public partial class MainForm : Form
   {
     ctrlFilterPaket.DataSource = Enum.GetValues(typeof(Paket));
     ctrlFilterPaket.SelectedItem = null;
+
+    ctrlTemplatesListe.DataSource = _tabellenListe;
+    TabelleFormatieren();
 
     var einstellungenGeladen = await _environmentManager
       .Get<Einstellungen>()

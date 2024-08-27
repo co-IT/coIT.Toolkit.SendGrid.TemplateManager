@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 
 namespace coIT.Toolkit.SendGrid.TemplateManager;
 
@@ -7,7 +7,7 @@ public static class SortableBindingListExtensions
   public static SortableBindingList<T> AsSortableBindingList<T>(this IEnumerable<T>? originList)
     where T : class
   {
-    return originList == null ? new SortableBindingList<T>() : new SortableBindingList<T>(originList.ToList());
+    return originList == null ? [] : new SortableBindingList<T>(originList.ToList());
   }
 }
 
@@ -29,6 +29,21 @@ public class SortableBindingList<T> : BindingList<T>
   /// <param name="list">An <see cref="T:System.Collections.Generic.IList`1" /> of items to be contained in the <see cref="T:System.ComponentModel.BindingList`1" />.</param>
   public SortableBindingList(IList<T> list)
     : base(list) { }
+
+  public void SortAgain()
+  {
+    if (!_isSorted)
+      return;
+
+    if (Items is not List<T> list)
+      return;
+
+    list.Sort(Compare);
+
+    _isSorted = true;
+    //fire an event that the list has been changed.
+    OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
+  }
 
   /// <summary>
   ///   Gets a value indicating whether the list supports sorting.
