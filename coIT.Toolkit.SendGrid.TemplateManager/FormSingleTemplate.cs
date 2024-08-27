@@ -1,4 +1,7 @@
-﻿namespace coIT.Toolkit.SendGrid.TemplateManager;
+using static System.Windows.Forms.LinkLabel;
+using System.Diagnostics;
+
+namespace coIT.Toolkit.SendGrid.TemplateManager;
 
 public partial class FormSingleTemplate : Form
 {
@@ -174,5 +177,12 @@ public partial class FormSingleTemplate : Form
   {
     await ctrlHtmlAnzeige.EnsureCoreWebView2Async(null);
     ctrlHtmlAnzeige.NavigateToString(html);
+  }
+
+  private void btnOeffneEditor_Click(object sender, EventArgs e)
+  {
+    var url = Template.SendGridTemplate.EditorUri.AbsoluteUri;
+
+    Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
   }
 }
