@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using coIT.Libraries.Sendgrid;
 using CSharpFunctionalExtensions;
+using Newtonsoft.Json;
 using SendGrid.Helpers.Mail;
 using static System.Windows.Forms.LinkLabel;
 
@@ -194,19 +195,29 @@ public partial class SingleTemplateForm : Form
 
   private async void btnSendTemplate_Click(object sender, EventArgs e)
   {
-    var form = new SendTemplateForm();
+    var form = new SendTemplateForm(Template);
+
     var dialogResult = form.ShowDialog();
 
     if (dialogResult != DialogResult.OK)
       return;
 
-    var email = form.Email;
+    var sendOptions = form.SendOptions;
 
     var message = new SendGridMessage
     {
-      From = new EmailAddress("test@co-IT.eu", "co-IT"),
+      From = new EmailAddress(sendOptions.SenderEmail, sendOptions.SenderName),
       TemplateId = Template.SendGridTemplate.TemplateId,
-      Personalizations = [new Personalization { Tos = [new EmailAddress(email.Address, "Testuser")] }],
+      Personalizations =
+      [
+        new Personalization
+        {
+          Tos = [new EmailAddress(sendOptions.RecipientEmail, $"{sendOptions.FirstName} {sendOptions.LastName}")],
+          TemplateData = JsonConvert.DeserializeObject<Dictionary<string, string>>(
+            JsonConvert.SerializeObject(sendOptions)
+          ),
+        },
+      ],
     };
 
     var result = await _sendGridService.SendTemplateAsync(message);

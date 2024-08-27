@@ -28,55 +28,44 @@
     /// </summary>
     private void InitializeComponent()
     {
-      label1 = new Label();
-      tbxEmail = new TextBox();
       btnSend = new Button();
+      propertyGrid = new PropertyGrid();
       SuspendLayout();
-      // 
-      // label1
-      // 
-      label1.AutoSize = true;
-      label1.Location = new Point(10, 15);
-      label1.Name = "label1";
-      label1.Size = new Size(44, 15);
-      label1.TabIndex = 0;
-      label1.Text = "E-Mail:";
-      // 
-      // tbxEmail
-      // 
-      tbxEmail.Location = new Point(57, 12);
-      tbxEmail.Name = "tbxEmail";
-      tbxEmail.Size = new Size(330, 23);
-      tbxEmail.TabIndex = 1;
       // 
       // btnSend
       // 
-      btnSend.Location = new Point(12, 51);
+      btnSend.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+      btnSend.Location = new Point(12, 777);
       btnSend.Name = "btnSend";
-      btnSend.Size = new Size(375, 23);
+      btnSend.Size = new Size(408, 23);
       btnSend.TabIndex = 2;
       btnSend.Text = "Feuer frei!";
       btnSend.UseVisualStyleBackColor = true;
       btnSend.Click += btnSend_Click;
       // 
+      // propertyGrid
+      // 
+      propertyGrid.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      propertyGrid.Location = new Point(12, 12);
+      propertyGrid.Name = "propertyGrid";
+      propertyGrid.Size = new Size(1097, 758);
+      propertyGrid.TabIndex = 3;
+      // 
       // SendTemplateForm
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
       AutoScaleMode = AutoScaleMode.Font;
-      ClientSize = new Size(404, 83);
+      ClientSize = new Size(1121, 811);
+      Controls.Add(propertyGrid);
       Controls.Add(btnSend);
-      Controls.Add(tbxEmail);
-      Controls.Add(label1);
       Name = "SendTemplateForm";
       Text = "SendTemplateForm";
+      Load += SendTemplateForm_Load;
       ResumeLayout(false);
-      PerformLayout();
     }
 
     #endregion
-
-    private Label label1;
-    private TextBox tbxEmail;
     private Button btnSend;
+    private PropertyGrid propertyGrid;
   }
 }
