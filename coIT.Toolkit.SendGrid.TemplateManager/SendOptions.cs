@@ -10,131 +10,131 @@ public record SendOptions
   [Category("Phishing Spezifisch"), Description("Empfänger-Email"), Required]
   public string RecipientEmail { get; set; } = "";
 
-  [Category("Phishing Spezifisch"), Description("First name of the user")]
+  [Category("Phishing Spezifisch"), Description("Vorname des Empfängers")]
   [JsonProperty("firstName")]
-  public string FirstName { get; init; } = "Max";
+  public string FirstName { get; set; } = "Max";
 
-  [Category("Phishing Spezifisch"), Description("Last name of the user")]
+  [Category("Phishing Spezifisch"), Description("Nachname des Empfängers")]
   [JsonProperty("lastName")]
-  public string LastName { get; init; } = "Mustermann";
+  public string LastName { get; set; } = "Mustermann";
 
-  [Category("Phishing Spezifisch"), Description("Name of the company")]
+  [Category("Phishing Spezifisch"), Description("Name des Unternehmens")]
   [JsonProperty("company")]
-  public string Company { get; init; } = "Test GmbH";
+  public string Company { get; set; } = "Test GmbH";
 
-  [Category("Phishing Spezifisch"), Description("Business sector of the company")]
+  [Category("Phishing Spezifisch"), Description("Branche des Unternehmens")]
   [JsonProperty("businessSector")]
-  public string BusinessSector { get; init; } = "Dienstleistungen";
+  public string BusinessSector { get; set; } = "Dienstleistungen";
 
-  [Category("Phishing Spezifisch"), Description("Full name of the accountant")]
+  [Category("Phishing Spezifisch"), Description("Name des Cyber-Verantwortlichen")]
   [JsonProperty("accountantName")]
-  public string AccountantName { get; init; } = "Johann Meier";
+  public string AccountantName { get; set; } = "Johann Meier";
 
-  [Category("Phishing Spezifisch"), Description("Department of the user")]
+  [Category("Phishing Spezifisch"), Description("Abteilung des Empfängers")]
   [JsonProperty("department")]
-  public string Department { get; init; } = "Einkauf";
+  public string Department { get; set; } = "Einkauf";
 
-  [Category("Phishing Spezifisch"), Description("Salutation of the user")]
+  [Category("Phishing Spezifisch"), Description("Anrede des Empfängers")]
   public string Salutation => $"Sehr geehrter Herr {LastName}";
 
-  [Category("Phishing Spezifisch"), Description("Unique tracking link")]
-  public string Link { get; init; } = "https://co-IT.eu";
+  [Category("Phishing Spezifisch"), Description("Eindeutiger Tracking-Link")]
+  public string Link { get; set; } = "https://co-IT.eu";
 
-  [Category("URLs"), Description("URL for Admin Configuration")]
+  [Category("URLs"), Description("URL für die Admin-Konfiguration")]
   public string UrlAdminConfiguration { get; set; } = "https://co-IT.eu";
 
-  [Category("URLs"), Description("URL for Scope of Services")]
+  [Category("URLs"), Description("URL für den Leistungsumfang")]
   public string UrlScopeOfServices { get; set; } = "https://co-IT.eu";
 
-  [Category("URLs"), Description("URL for General Terms and Conditions")]
+  [Category("URLs"), Description("URL für die Allgemeinen Geschäftsbedingungen")]
   public string UrlGeneralTermsAndConditions { get; set; } = "https://co-IT.eu";
 
-  [Category("URLs"), Description("URL for Terms of Use")]
+  [Category("URLs"), Description("URL für die Nutzungsbedingungen")]
   public string UrlTermsOfUse { get; set; } = "https://co-IT.eu";
 
-  [Category("URLs"), Description("URL for Help on Accountant Functions")]
+  [Category("URLs"), Description("URL für Hilfe zu Buchhaltungsfunktionen")]
   public string UrlHelpAccountantFunctions { get; set; } = "https://co-IT.eu";
 
-  [Category("URLs"), Description("URL for Help on Accountant Registration")]
+  [Category("URLs"), Description("URL für Hilfe zur Buchhalterregistrierung")]
   public string UrlHelpAccountantRegistration { get; set; } = "https://co-IT.eu";
 
-  [Category("URLs"), Description("URL for Help on Agencies")]
+  [Category("URLs"), Description("URL für Hilfe zu Agenturen")]
   public string UrlHelpAgencies { get; set; } = "https://co-IT.eu";
 
-  [Category("URLs"), Description("URL for Help on User Functions")]
+  [Category("URLs"), Description("URL für Hilfe zu Benutzerfunktionen")]
   public string UrlHelpUserFunctions { get; set; } = "https://co-IT.eu";
 
-  [Category("URLs"), Description("URL for Help on User Registration")]
+  [Category("URLs"), Description("URL für Hilfe zur Benutzerregistrierung")]
   public string UrlHelpUserRegistration { get; set; } = "https://co-IT.eu";
 
-  [Category("URLs"), Description("URL for Help on Phishing Activation")]
+  [Category("URLs"), Description("URL für Hilfe zur Phishing-Aktivierung")]
   public string UrlHelpPhishingActivation { get; set; } = "https://co-IT.eu";
 
-  [Category("URLs"), Description("URL for Online Banking Checklist")]
+  [Category("URLs"), Description("URL für die Online-Banking-Checkliste")]
   public string UrlOnlineBankingChecklist { get; set; } = "https://co-IT.eu";
 
-  [Category("URLs"), Description("URL for Privacy Policy")]
+  [Category("URLs"), Description("URL für die Datenschutzerklärung")]
   public string UrlPrivacy { get; set; } = "https://co-IT.eu";
 
   // Time
-  [Category("Time"), Description("Current date in dd.MM.yyyy format")]
+  [Category("Zeit"), Description("Aktuelles Datum im Format dd.MM.yyyy")]
   [JsonProperty("today")]
   public string Today { get; set; } = DateTime.Now.ToString("dd.MM.yyyy");
 
-  [Category("Time"), Description("Current day of the week")]
+  [Category("Zeit"), Description("Aktueller Wochentag")]
   [JsonProperty("todayWeekDay")]
   public string TodayWeekDay { get; set; } =
     CultureInfo.CurrentCulture.DateTimeFormat.GetDayName(DateTime.Today.DayOfWeek);
 
-  [Category("Time"), Description("Date for the same day next week in dd.MM.yyyy format")]
+  [Category("Zeit"), Description("Datum des Tages in einer Woche im Format dd.MM.yyyy")]
   [JsonProperty("nextWeek")]
   public string NextWeek { get; set; } = DateTime.Now.AddDays(7).ToString("dd.MM.yyyy");
 
-  [Category("Time"), Description("Date for the same day last week in dd.MM.yyyy format")]
+  [Category("Zeit"), Description("Datum des Tages vor einer Woche im Format dd.MM.yyyy")]
   [JsonProperty("lastWeek")]
   public string LastWeek { get; set; } = DateTime.Now.AddDays(-7).ToString("dd.MM.yyyy");
 
-  [Category("Time"), Description("Current year")]
+  [Category("Zeit"), Description("Aktuelles Jahr")]
   [JsonProperty("thisYear")]
   public string ThisYear { get; set; } = DateTime.Now.Year.ToString();
 
-  [Category("Time"), Description("Next year")]
+  [Category("Zeit"), Description("Nächstes Jahr")]
   [JsonProperty("nextYear")]
   public string NextYear { get; set; } = DateTime.Now.AddYears(1).Year.ToString();
 
-  [Category("Time"), Description("Last year")]
+  [Category("Zeit"), Description("Letztes Jahr")]
   [JsonProperty("lastYear")]
   public string LastYear { get; set; } = DateTime.Now.AddYears(-1).Year.ToString();
 
   // Common
-  [Category("Common"), Description("Name of the application")]
+  [Category("Allgemein"), Description("Name der Anwendung")]
   public string AppName { get; set; } = "Cyber Lounge";
 
-  [Category("Common"), Description("Base path of the application")]
+  [Category("Allgemein"), Description("Basis-URL der Anwendung")]
   public string AppBasePath { get; set; } = "https://cyber-lounge.co-IT.eu";
 
-  [Category("Common"), Description("Current environment name")]
+  [Category("Allgemein"), Description("Umgebungsname")]
   public string Environment { get; set; } = "Staging";
 
-  [Category("Common"), Description("Label for the current environment")]
+  [Category("Allgemein"), Description("Bezeichnung für die Umgebung")]
   public string EnvironmentLabel { get; set; } = "Beta";
 
-  [Category("Common"), Description("Name of the sender")]
+  [Category("Allgemein"), Description("Name des Absenders")]
   public string SenderName { get; set; } = "Cyber Lounge";
 
-  [Category("Common"), Description("Email of the sender")]
+  [Category("Allgemein"), Description("E-Mail des Absenders")]
   public string SenderEmail { get; set; } = "cyber-lounge@co-IT.eu";
 
-  [Category("Common"), Description("Default email address")]
+  [Category("Allgemein"), Description("Standard-E-Mail-Adresse")]
   public string DefaultEmail { get; set; } = "cyber-lounge@co-IT.eu";
 
-  [Category("Common"), Description("No-reply email address")]
+  [Category("Allgemein"), Description("No-Reply-E-Mail-Adresse")]
   public string NoReplyEmail { get; set; } = "noreply.cyber-lounge@co-IT.eu";
 
-  [Category("Common"), Description("Support email address")]
+  [Category("Allgemein"), Description("Support-E-Mail-Adresse")]
   public string SupportEmail { get; set; } = "cl-support@co-IT.eu";
 
-  [Category("Common"), Description("Email disclaimer")]
+  [Category("Allgemein"), Description("E-Mail-Disclaimer")]
   [JsonProperty("disclaimer")]
   public string Disclaimer { get; set; } = "Viel Spaß mit der Cyber Lounge!";
 }
