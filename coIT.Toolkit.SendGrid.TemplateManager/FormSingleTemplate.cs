@@ -1,18 +1,24 @@
-using static System.Windows.Forms.LinkLabel;
 using System.Diagnostics;
+using coIT.Libraries.Sendgrid;
+using CSharpFunctionalExtensions;
+using SendGrid.Helpers.Mail;
+using static System.Windows.Forms.LinkLabel;
 
 namespace coIT.Toolkit.SendGrid.TemplateManager;
 
 public partial class FormSingleTemplate : Form
 {
+  private readonly SendGridService _sendGridService;
+
   public FormSingleTemplate()
   {
     InitializeComponent();
   }
 
-  public FormSingleTemplate(ManagedTemplate template)
+  public FormSingleTemplate(ManagedTemplate template, SendGridService sendGridService)
     : this()
   {
+    _sendGridService = sendGridService;
     Template = template;
   }
 
@@ -184,5 +190,27 @@ public partial class FormSingleTemplate : Form
     var url = Template.SendGridTemplate.EditorUri.AbsoluteUri;
 
     Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+  }
+
+  private async void btnSendTemplate_Click(object sender, EventArgs e)
+  {
+    var form = new SendTemplateForm();
+    var dialogResult = form.ShowDialog();
+
+    if (dialogResult != DialogResult.OK)
+      return;
+
+    var email = form.Email;
+
+    var message = new SendGridMessage
+    {
+      From = new EmailAddress("test@co-IT.eu", "co-IT"),
+      TemplateId = Template.SendGridTemplate.TemplateId,
+      Personalizations = [new Personalization { Tos = [new EmailAddress(email.Address, "Testuser")] }],
+    };
+
+    var result = await _sendGridService.SendTemplateAsync(message);
+
+    result.Match(() => MessageBox.Show("Erfolgreich gesendet"), MessageBox.Show);
   }
 }

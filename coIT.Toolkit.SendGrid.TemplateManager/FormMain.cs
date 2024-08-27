@@ -326,7 +326,7 @@ public partial class FormMain : Form
 
   private async void ctrlTemplatesListe_DoubleClick(object sender, EventArgs e)
   {
-    using var einzelAnsicht = new FormSingleTemplate(_selektiertesTemplate);
+    using var einzelAnsicht = new FormSingleTemplate(_selektiertesTemplate, _sendGridService);
     einzelAnsicht.ZeigeTemplate();
     var speichern = einzelAnsicht.ShowDialog(this);
 

@@ -29,6 +29,7 @@
     private void InitializeComponent()
     {
       splitContainer1 = new SplitContainer();
+      btnOeffneEditor = new Button();
       groupBox2 = new GroupBox();
       ctrlAbsendername = new TextBox();
       ctrlDomains = new ComboBox();
@@ -77,7 +78,7 @@
       ctrlEinstufungHatLogo = new CheckBox();
       label1 = new Label();
       ctrlHtmlAnzeige = new Microsoft.Web.WebView2.WinForms.WebView2();
-      btnOeffneEditor = new Button();
+      btnSendTemplate = new Button();
       ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
       splitContainer1.Panel1.SuspendLayout();
       splitContainer1.Panel2.SuspendLayout();
@@ -97,6 +98,7 @@
       // 
       // splitContainer1.Panel1
       // 
+      splitContainer1.Panel1.Controls.Add(btnSendTemplate);
       splitContainer1.Panel1.Controls.Add(btnOeffneEditor);
       splitContainer1.Panel1.Controls.Add(groupBox2);
       splitContainer1.Panel1.Controls.Add(ctrlAbbrechen);
@@ -110,6 +112,17 @@
       splitContainer1.SplitterDistance = 299;
       splitContainer1.SplitterWidth = 2;
       splitContainer1.TabIndex = 0;
+      // 
+      // btnOeffneEditor
+      // 
+      btnOeffneEditor.Location = new Point(1106, 248);
+      btnOeffneEditor.Margin = new Padding(2);
+      btnOeffneEditor.Name = "btnOeffneEditor";
+      btnOeffneEditor.Size = new Size(122, 43);
+      btnOeffneEditor.TabIndex = 5;
+      btnOeffneEditor.Text = "Editor öffnen";
+      btnOeffneEditor.UseVisualStyleBackColor = true;
+      btnOeffneEditor.Click += btnOeffneEditor_Click;
       // 
       // groupBox2
       // 
@@ -656,16 +669,16 @@
       ctrlHtmlAnzeige.TabIndex = 0;
       ctrlHtmlAnzeige.ZoomFactor = 1D;
       // 
-      // btnOeffneEditor
+      // btnSendTemplate
       // 
-      btnOeffneEditor.Location = new Point(1106, 248);
-      btnOeffneEditor.Margin = new Padding(2);
-      btnOeffneEditor.Name = "btnOeffneEditor";
-      btnOeffneEditor.Size = new Size(122, 43);
-      btnOeffneEditor.TabIndex = 5;
-      btnOeffneEditor.Text = "Editor öffnen";
-      btnOeffneEditor.UseVisualStyleBackColor = true;
-      btnOeffneEditor.Click += btnOeffneEditor_Click;
+      btnSendTemplate.Location = new Point(969, 248);
+      btnSendTemplate.Margin = new Padding(2);
+      btnSendTemplate.Name = "btnSendTemplate";
+      btnSendTemplate.Size = new Size(122, 43);
+      btnSendTemplate.TabIndex = 6;
+      btnSendTemplate.Text = "Template senden";
+      btnSendTemplate.UseVisualStyleBackColor = true;
+      btnSendTemplate.Click += btnSendTemplate_Click;
       // 
       // FormSingleTemplate
       // 
@@ -740,5 +753,6 @@
         private ComboBox ctrlTrackingLinkDomain;
         private Microsoft.Web.WebView2.WinForms.WebView2 ctrlHtmlAnzeige;
     private Button btnOeffneEditor;
+    private Button btnSendTemplate;
   }
 }
