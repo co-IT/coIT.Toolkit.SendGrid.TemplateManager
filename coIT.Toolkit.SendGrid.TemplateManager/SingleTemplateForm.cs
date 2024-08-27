@@ -6,16 +6,16 @@ using static System.Windows.Forms.LinkLabel;
 
 namespace coIT.Toolkit.SendGrid.TemplateManager;
 
-public partial class FormSingleTemplate : Form
+public partial class SingleTemplateForm : Form
 {
   private readonly SendGridService _sendGridService;
 
-  public FormSingleTemplate()
+  public SingleTemplateForm()
   {
     InitializeComponent();
   }
 
-  public FormSingleTemplate(ManagedTemplate template, SendGridService sendGridService)
+  public SingleTemplateForm(ManagedTemplate template, SendGridService sendGridService)
     : this()
   {
     _sendGridService = sendGridService;

@@ -17,7 +17,7 @@ internal static class Program
     if (!updatesWurdenGefundenUndWerdenDurchgeführt)
     {
       ApplicationConfiguration.Initialize();
-      Application.Run(new FormMain());
+      Application.Run(new MainForm());
     }
   }
 

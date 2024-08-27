@@ -8,7 +8,7 @@ using CSharpFunctionalExtensions;
 
 namespace coIT.Toolkit.SendGrid.TemplateManager;
 
-public partial class FormMain : Form
+public partial class MainForm : Form
 {
   private List<ManagedTemplate> _alleTemplates = Enumerable.Empty<ManagedTemplate>().ToList();
   private CancellationTokenSource _cts;
@@ -21,7 +21,7 @@ public partial class FormMain : Form
   private ManagedTemplateRepository _managedTemplateRepository;
   private SendGridService _sendGridService;
 
-  public FormMain()
+  public MainForm()
   {
     InitializeComponent();
 
@@ -326,7 +326,7 @@ public partial class FormMain : Form
 
   private async void ctrlTemplatesListe_DoubleClick(object sender, EventArgs e)
   {
-    using var einzelAnsicht = new FormSingleTemplate(_selektiertesTemplate, _sendGridService);
+    using var einzelAnsicht = new SingleTemplateForm(_selektiertesTemplate, _sendGridService);
     einzelAnsicht.ZeigeTemplate();
     var speichern = einzelAnsicht.ShowDialog(this);
 
@@ -714,7 +714,7 @@ public partial class FormMain : Form
 
   private void ctrl_PaketUebersicht_Click(object sender, EventArgs e)
   {
-    using var paketUebersicht = new PaketUebersicht(_alleTemplates);
+    using var paketUebersicht = new PaketUebersichtForm(_alleTemplates);
     paketUebersicht.ShowDialog(this);
   }
 

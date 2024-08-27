@@ -1,6 +1,6 @@
 ﻿namespace coIT.Toolkit.SendGrid.TemplateManager
 {
-    partial class FormMain
+    partial class MainForm
     {
         /// <summary>
         ///  Required designer variable.
@@ -757,14 +757,14 @@
       label7.TabIndex = 0;
       label7.Text = "Api Key:";
       // 
-      // FormMain
+      // MainForm
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
       AutoScaleMode = AutoScaleMode.Font;
       ClientSize = new Size(1454, 804);
       Controls.Add(tbcManager);
       Margin = new Padding(2);
-      Name = "FormMain";
+      Name = "MainForm";
       Text = "SendGrid Template Manager";
       Load += FormMain_Load;
       splitContainer1.Panel1.ResumeLayout(false);

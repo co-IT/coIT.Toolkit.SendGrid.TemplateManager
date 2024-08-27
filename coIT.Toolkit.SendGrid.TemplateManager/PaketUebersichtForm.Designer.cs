@@ -1,6 +1,6 @@
 ﻿namespace coIT.Toolkit.SendGrid.TemplateManager
 {
-    partial class PaketUebersicht
+    partial class PaketUebersichtForm
     {
         /// <summary>
         /// Required designer variable.
@@ -40,13 +40,13 @@
             ctrl_PaketeLayout.Size = new Size(800, 450);
             ctrl_PaketeLayout.TabIndex = 0;
             // 
-            // PaketUebersicht
+            // PaketUebersichtForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
             Controls.Add(ctrl_PaketeLayout);
-            Name = "PaketUebersicht";
+            Name = "PaketUebersichtForm";
             Text = "PaketUebersicht";
             Load += PaketUebersicht_Load;
             ResumeLayout(false);

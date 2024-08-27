@@ -1,10 +1,10 @@
 ﻿namespace coIT.Toolkit.SendGrid.TemplateManager;
 
-public partial class PaketUebersicht : Form
+public partial class PaketUebersichtForm : Form
 {
   private readonly List<ManagedTemplate> _alleTemplates;
 
-  public PaketUebersicht(List<ManagedTemplate> alleTemplates)
+  public PaketUebersichtForm(List<ManagedTemplate> alleTemplates)
   {
     InitializeComponent();
 

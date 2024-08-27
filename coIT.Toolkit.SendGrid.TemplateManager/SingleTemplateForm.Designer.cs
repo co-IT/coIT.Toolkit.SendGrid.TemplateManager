@@ -1,6 +1,6 @@
 ﻿namespace coIT.Toolkit.SendGrid.TemplateManager
 {
-    partial class FormSingleTemplate
+    partial class SingleTemplateForm
     {
         /// <summary>
         /// Required designer variable.
@@ -680,14 +680,14 @@
       btnSendTemplate.UseVisualStyleBackColor = true;
       btnSendTemplate.Click += btnSendTemplate_Click;
       // 
-      // FormSingleTemplate
+      // SingleTemplateForm
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
       AutoScaleMode = AutoScaleMode.Font;
       ClientSize = new Size(1237, 733);
       Controls.Add(splitContainer1);
       Margin = new Padding(2);
-      Name = "FormSingleTemplate";
+      Name = "SingleTemplateForm";
       Text = "Template";
       splitContainer1.Panel1.ResumeLayout(false);
       splitContainer1.Panel2.ResumeLayout(false);
