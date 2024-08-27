@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="coIT.Libraries.ConfigurationManager" Version="1.0.0" />
     <PackageReference Include="coIT.Libraries.Sendgrid" Version="2.0.0" />
     <PackageReference Include="CSharpFunctionalExtensions" Version="2.42.5" />
     <PackageReference Include="Dapper" Version="2.1.35" />

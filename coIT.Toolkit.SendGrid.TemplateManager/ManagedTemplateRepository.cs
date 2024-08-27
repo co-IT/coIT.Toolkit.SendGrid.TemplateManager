@@ -1,28 +1,32 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Text;
 using coIT.Libraries.Sendgrid.Contracts;
 using Newtonsoft.Json;
 
 namespace coIT.Toolkit.SendGrid.TemplateManager;
 
-public static class ManagedTemplateRepository
+public class ManagedTemplateRepository
 {
-  private static readonly string LokalerPfad = "D:\\co-IT.eu GmbH\\Uli Armbruster - Cyber Lounge\\SendGrid\\database";
+  private readonly string _pfad;
 
-  static ManagedTemplateRepository()
+  public static ManagedTemplateRepository Erstellen(string pfad)
   {
-    if (!Directory.Exists(LokalerPfad))
-      Directory.CreateDirectory(LokalerPfad);
+    return new ManagedTemplateRepository(pfad);
   }
 
-  public static async Task<List<ManagedTemplate>> LadeAusLokalenKopien(CancellationToken ct)
+  private ManagedTemplateRepository(string pfad)
+  {
+    _pfad = pfad;
+  }
+
+  public async Task<List<ManagedTemplate>> LadeAusLokalenKopien(CancellationToken ct)
   {
     var templates = new List<ManagedTemplate>();
 
-    if (!Directory.Exists(LokalerPfad))
+    if (!Directory.Exists(_pfad))
       return templates;
 
-    var gespeicherteTemplates = Directory.GetFiles(LokalerPfad, "*.json", SearchOption.TopDirectoryOnly);
+    var gespeicherteTemplates = Directory.GetFiles(_pfad, "*.json", SearchOption.TopDirectoryOnly);
 
     foreach (var gespeichertesTemplate in gespeicherteTemplates)
     {
@@ -46,7 +50,7 @@ public static class ManagedTemplateRepository
     return managedTemplate;
   }
 
-  public static async Task AktualisiereLokaleKopien(IEnumerable<ManagedTemplate> templates, CancellationToken ct)
+  public async Task AktualisiereLokaleKopien(IEnumerable<ManagedTemplate> templates, CancellationToken ct)
   {
     foreach (var template in templates)
     {
@@ -57,13 +61,13 @@ public static class ManagedTemplateRepository
     }
   }
 
-  public static async Task AktualisiereLokaleKopie(ManagedTemplate template, CancellationToken ct)
+  public async Task AktualisiereLokaleKopie(ManagedTemplate template, CancellationToken ct)
   {
     var content = JsonConvert.SerializeObject(template);
     await File.WriteAllTextAsync(Filepath(template.SendGridTemplate), content, Encoding.UTF8, ct);
   }
 
-  public static async Task AktualisiereLokaleKopie(IEnumerable<SendGridTemplate> templates, CancellationToken ct)
+  public async Task AktualisiereLokaleKopie(IEnumerable<SendGridTemplate> templates, CancellationToken ct)
   {
     foreach (var template in templates)
     {
@@ -88,9 +92,9 @@ public static class ManagedTemplateRepository
     }
   }
 
-  private static string Filepath(SendGridTemplate template)
+  private string Filepath(SendGridTemplate template)
   {
-    return Path.Combine(LokalerPfad, Filename(template.TemplateId));
+    return Path.Combine(_pfad, Filename(template.TemplateId));
   }
 
   private static string Filename(string templateId)
@@ -98,7 +102,7 @@ public static class ManagedTemplateRepository
     return $"{templateId}.json";
   }
 
-  public static void EditiereLokaleKopie(ManagedTemplate template)
+  public void EditiereLokaleKopie(ManagedTemplate template)
   {
     var file = Filepath(template.SendGridTemplate);
 

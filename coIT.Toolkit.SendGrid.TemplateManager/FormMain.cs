@@ -1,5 +1,8 @@
 using System.Diagnostics;
 using System.Text;
+using coIT.Libraries.ConfigurationManager;
+using coIT.Libraries.ConfigurationManager.Cryptography;
+using coIT.Libraries.ConfigurationManager.Serialization;
 using coIT.Libraries.Sendgrid;
 using CSharpFunctionalExtensions;
 
@@ -14,9 +17,18 @@ public partial class FormMain : Form
   private int _selektierteZeile;
   private Func<ManagedTemplate, object> _sortierung = t => t.SendGridTemplate.Name;
 
+  private readonly EnvironmentManager _environmentManager;
+  private Einstellungen _einstellungen;
+  private ManagedTemplateRepository _managedTemplateRepository;
+
   public FormMain()
   {
     InitializeComponent();
+
+    var schlüssel = "eyJJdGVtMSI6Ijk2QUttM1JmZEs3OG55NGgxTzUrb1NlVm5PQm1GNnhiTHR3TzRmY3BPckE9IiwiSXRlbTIiOiJZdVo1eC9JdXRWQzg2RXJFRTQzWHF3PT0ifQ==";
+    var cryptographyService = AesCryptographyService.FromKey(schlüssel);
+    var serializer = new NewtonsoftJsonSerializer();
+    _environmentManager = new EnvironmentManager(cryptographyService.Value, serializer);
   }
 
   private void MeldungAnzeigen(string meldung)
@@ -35,11 +47,10 @@ public partial class FormMain : Form
   {
     MeldungAnzeigen("Lade Templates von SendGrid ohne Inhalte");
 
-    return await SendGridService
-      .CreateWithApiKeyFromEnvironment()
+    return await Result.Success(new SendGridService(_einstellungen.ApiKey))
       .Map(s => s.GetAllTemplates(ct))
-      .Tap(templates => ManagedTemplateRepository.AktualisiereLokaleKopie(templates, ct))
-      .Map(_ => ManagedTemplateRepository.LadeAusLokalenKopien(ct))
+      .Tap(templates => _managedTemplateRepository.AktualisiereLokaleKopie(templates, ct))
+      .Map(_ => _managedTemplateRepository.LadeAusLokalenKopien(ct))
       .Tap(templates => _alleTemplates = templates)
       .Tap(() => MeldungAnzeigen($"{_alleTemplates.Count} Templates gefunden"));
   }
@@ -71,7 +82,7 @@ public partial class FormMain : Form
           template.HtmlContent = inhalt.HtmlContent;
           template.PlainContent = inhalt.PlainContent;
         })
-        .Tap(_ => ManagedTemplateRepository.AktualisiereLokaleKopie(template, ct))
+        .Tap(_ => _managedTemplateRepository.AktualisiereLokaleKopie(template, ct))
         .TapError(FehlerAnzeigen);
 
       verarbeitet += 1;
@@ -105,7 +116,7 @@ public partial class FormMain : Form
     MeldungAnzeigen("Lade Templates aus lokalem Speicher");
 
     _cts = new CancellationTokenSource();
-    _alleTemplates = await ManagedTemplateRepository.LadeAusLokalenKopien(_cts.Token);
+    _alleTemplates = await _managedTemplateRepository.LadeAusLokalenKopien(_cts.Token);
 
     AktualisiereTabelle();
 
@@ -327,7 +338,8 @@ public partial class FormMain : Form
 
     if (speichern == DialogResult.Yes)
     {
-      await ManagedTemplateRepository.AktualisiereLokaleKopie(_selektiertesTemplate, CancellationToken.None);
+      await _managedTemplateRepository
+        .AktualisiereLokaleKopie(_selektiertesTemplate, CancellationToken.None);
       AktualisiereTabelle();
     }
   }
@@ -342,7 +354,7 @@ public partial class FormMain : Form
     _selektiertesTemplate.Absender = null;
     _selektiertesTemplate.Einstufung = null;
 
-    await ManagedTemplateRepository.AktualisiereLokaleKopie(_selektiertesTemplate, CancellationToken.None);
+    await _managedTemplateRepository.AktualisiereLokaleKopie(_selektiertesTemplate, CancellationToken.None);
     _selektierteZeile = 0;
 
     AktualisiereTabelle();
@@ -399,7 +411,7 @@ public partial class FormMain : Form
     else
       _selektiertesTemplate.Tags = _selektiertesTemplate.Tags.Concat(new[] { tag }).Distinct().OrderBy(t => t).ToList();
 
-    await ManagedTemplateRepository.AktualisiereLokaleKopie(_selektiertesTemplate, CancellationToken.None);
+    await _managedTemplateRepository.AktualisiereLokaleKopie(_selektiertesTemplate, CancellationToken.None);
     AktualisiereTabelle();
   }
 
@@ -421,7 +433,7 @@ public partial class FormMain : Form
         .OrderBy(p => p)
         .ToList();
 
-    await ManagedTemplateRepository.AktualisiereLokaleKopie(_selektiertesTemplate, CancellationToken.None);
+    await _managedTemplateRepository.AktualisiereLokaleKopie(_selektiertesTemplate, CancellationToken.None);
     AktualisiereTabelle();
   }
 
@@ -447,7 +459,7 @@ public partial class FormMain : Form
 
   private void ctrlJsonBearbeiten_Click(object sender, EventArgs e)
   {
-    ManagedTemplateRepository.EditiereLokaleKopie(_selektiertesTemplate);
+    _managedTemplateRepository.EditiereLokaleKopie(_selektiertesTemplate);
     MessageBox.Show(
       "Nach dem Editieren müssen die lokalen Daten manuell neugeladen werden.",
       "Hinweis",
@@ -561,7 +573,7 @@ public partial class FormMain : Form
 
       template.Absender = new Absender { Name = absenderName, Adresse = absenderAdresse };
 
-      await ManagedTemplateRepository.AktualisiereLokaleKopie(template, CancellationToken.None);
+      await _managedTemplateRepository.AktualisiereLokaleKopie(template, CancellationToken.None);
       MeldungAnzeigen($"{template.Absender}in Template {template.SendGridTemplate.Name} aktualisiert.");
     }
 
@@ -682,15 +694,63 @@ public partial class FormMain : Form
     AktualisiereTabelle();
   }
 
-  private void FormMain_Load(object sender, EventArgs e)
+  private async void FormMain_Load(object sender, EventArgs e)
   {
     ctrlFilterPaket.DataSource = Enum.GetValues(typeof(Paket));
     ctrlFilterPaket.SelectedItem = null;
+
+    var einstellungenGeladen = await _environmentManager.Get<Einstellungen>()
+      .Tap(einstellungen => _einstellungen = einstellungen)
+      .Tap(einstellungen => _managedTemplateRepository = ManagedTemplateRepository.Erstellen(einstellungen.DatenbankPfad));
+
+    if (einstellungenGeladen.IsFailure)
+    {
+      MessageBox.Show("Einstellungen konnten nicht geladen werden. Bitte Ersteinrichtung vornehmen", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
+      tbpManager.Enabled = false;
+      tbcManager.SelectedTab = tbpEinstellungen;
+    }
   }
 
   private void ctrl_PaketUebersicht_Click(object sender, EventArgs e)
   {
     using var paketUebersicht = new PaketUebersicht(_alleTemplates);
     paketUebersicht.ShowDialog(this);
+  }
+
+  private void btnDatenbankAuswählen_Click(object sender, EventArgs e)
+  {
+    DialogResult result = dlgDatenbankOrdner.ShowDialog();
+
+    if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(dlgDatenbankOrdner.SelectedPath))
+    {
+      tbxDatenbankPfad.Text = dlgDatenbankOrdner.SelectedPath;
+    }
+  }
+
+  private async void btnEinstellungenSpeichern_Click(object sender, EventArgs e)
+  {
+    btnEinstellungenSpeichern.Enabled = false;
+
+    var einstellungen = new Einstellungen
+    {
+      ApiKey = tbxApiKey.Text,
+      DatenbankPfad = tbxDatenbankPfad.Text
+    };
+
+    var ergebnis = await _environmentManager.Save(einstellungen);
+
+    if (ergebnis.IsFailure)
+    {
+      MessageBox.Show(ergebnis.Error, "Speichern fehlgeschlagen", MessageBoxButtons.OK, MessageBoxIcon.Error);
+    }
+    else
+    {
+      MessageBox.Show("Konfiguration wurde erfolgreich gespeichert", "Gespeichert");
+      _einstellungen = einstellungen;
+      _managedTemplateRepository = ManagedTemplateRepository.Erstellen(einstellungen.DatenbankPfad);
+      tbpManager.Enabled = true;
+    }
+
+    btnEinstellungenSpeichern.Enabled = true;
   }
 }
