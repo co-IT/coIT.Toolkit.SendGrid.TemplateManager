@@ -125,28 +125,31 @@ public partial class MainForm : Form
 
   private void AktualisiereTabelle()
   {
-    var sortiertUndGefiltert = FilterAnwenden()
-      //.OrderBy(_sortierung)
-      .Select(t => t.ToTabellenEintrag())
-      .ToList();
-
-    _tabellenListe.Clear();
-
-    foreach (var tabellenEintrag in sortiertUndGefiltert)
-    {
-      _tabellenListe.Add(tabellenEintrag);
-    }
-
-    _tabellenListe.SortAgain();
-
     ctrlTemplatesListe.InvokeIfRequired(() =>
     {
-      if (
-        ctrlTemplatesListe.Rows.Count > 0
-        && ctrlTemplatesListe.Rows.Count >= _selektierteZeile
-        && _selektierteZeile > 1
-      )
-        ctrlTemplatesListe.Rows[_selektierteZeile].Selected = true;
+      var sortiertUndGefiltert = FilterAnwenden()
+        //.OrderBy(_sortierung)
+        .Select(t => t.ToTabellenEintrag())
+        .ToList();
+
+      _tabellenListe.Clear();
+
+      foreach (var tabellenEintrag in sortiertUndGefiltert)
+      {
+        _tabellenListe.Add(tabellenEintrag);
+      }
+
+      _tabellenListe.SortAgain();
+
+      ctrlTemplatesListe.InvokeIfRequired(() =>
+      {
+        if (
+          ctrlTemplatesListe.Rows.Count > 0
+          && ctrlTemplatesListe.Rows.Count >= _selektierteZeile
+          && _selektierteZeile > 1
+        )
+          ctrlTemplatesListe.Rows[_selektierteZeile].Selected = true;
+      });
     });
   }
 
@@ -698,8 +701,8 @@ public partial class MainForm : Form
     ctrlFilterPaket.DataSource = Enum.GetValues(typeof(Paket));
     ctrlFilterPaket.SelectedItem = null;
 
-    ctrlTemplatesListe.DataSource = _tabellenListe;
-    TabelleFormatieren();
+    ctrlTemplatesListe.InvokeIfRequired(() => ctrlTemplatesListe.DataSource = _tabellenListe);
+    ctrlTemplatesListe.InvokeIfRequired(TabelleFormatieren);
 
     var einstellungenGeladen = await _environmentManager
       .Get<Einstellungen>()
