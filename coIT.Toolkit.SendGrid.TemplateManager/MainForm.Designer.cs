@@ -1,4 +1,4 @@
-﻿namespace coIT.Toolkit.SendGrid.TemplateManager
+namespace coIT.Toolkit.SendGrid.TemplateManager
 {
     partial class MainForm
     {
@@ -28,7 +28,6 @@
     /// </summary>
     private void InitializeComponent()
     {
-      splitContainer1 = new SplitContainer();
       groupBox3 = new GroupBox();
       ctrlKlicksEinlesen = new Button();
       ctrlImportiereBestandsdaten = new Button();
@@ -69,11 +68,10 @@
       ctrlOeffneEditor = new Button();
       ctrlOeffneWebansicht = new Button();
       ctrlOeffnePreview = new Button();
-      splitContainer2 = new SplitContainer();
-      ctrlTemplatesListe = new DataGridView();
-      ctrlMeldungen = new ListBox();
       tbcManager = new TabControl();
       tbpManager = new TabPage();
+      ctrlMeldungen = new ListBox();
+      ctrlTemplatesListe = new DataGridView();
       tbpEinstellungen = new TabPage();
       groupBox2 = new GroupBox();
       btnEinstellungenSpeichern = new Button();
@@ -83,63 +81,30 @@
       tbxApiKey = new TextBox();
       label7 = new Label();
       dlgDatenbankOrdner = new FolderBrowserDialog();
-      ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
-      splitContainer1.Panel1.SuspendLayout();
-      splitContainer1.Panel2.SuspendLayout();
-      splitContainer1.SuspendLayout();
+      panel1 = new Panel();
       groupBox3.SuspendLayout();
       ctrlPakete.SuspendLayout();
       ctrlTags.SuspendLayout();
       groupBox1.SuspendLayout();
       ctrlDatenLadenGruppe.SuspendLayout();
       ctrlAktionen.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)splitContainer2).BeginInit();
-      splitContainer2.Panel1.SuspendLayout();
-      splitContainer2.Panel2.SuspendLayout();
-      splitContainer2.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)ctrlTemplatesListe).BeginInit();
       tbcManager.SuspendLayout();
       tbpManager.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)ctrlTemplatesListe).BeginInit();
       tbpEinstellungen.SuspendLayout();
       groupBox2.SuspendLayout();
+      panel1.SuspendLayout();
       SuspendLayout();
-      // 
-      // splitContainer1
-      // 
-      splitContainer1.Dock = DockStyle.Fill;
-      splitContainer1.FixedPanel = FixedPanel.Panel1;
-      splitContainer1.Location = new Point(3, 3);
-      splitContainer1.Margin = new Padding(2);
-      splitContainer1.Name = "splitContainer1";
-      splitContainer1.Orientation = Orientation.Horizontal;
-      // 
-      // splitContainer1.Panel1
-      // 
-      splitContainer1.Panel1.Controls.Add(groupBox3);
-      splitContainer1.Panel1.Controls.Add(ctrlPakete);
-      splitContainer1.Panel1.Controls.Add(ctrlTags);
-      splitContainer1.Panel1.Controls.Add(groupBox1);
-      splitContainer1.Panel1.Controls.Add(ctrlDatenLadenGruppe);
-      splitContainer1.Panel1.Controls.Add(ctrlAktionen);
-      // 
-      // splitContainer1.Panel2
-      // 
-      splitContainer1.Panel2.Controls.Add(splitContainer2);
-      splitContainer1.Size = new Size(1440, 770);
-      splitContainer1.SplitterDistance = 175;
-      splitContainer1.SplitterWidth = 2;
-      splitContainer1.TabIndex = 0;
       // 
       // groupBox3
       // 
-      groupBox3.Anchor = AnchorStyles.Left;
       groupBox3.Controls.Add(ctrlKlicksEinlesen);
       groupBox3.Controls.Add(ctrlImportiereBestandsdaten);
       groupBox3.Controls.Add(ctrlCsvExportCyberLounge);
-      groupBox3.Location = new Point(175, 5);
-      groupBox3.Margin = new Padding(2);
+      groupBox3.Location = new Point(177, 18);
+      groupBox3.Margin = new Padding(2, 2, 2, 2);
       groupBox3.Name = "groupBox3";
-      groupBox3.Padding = new Padding(2);
+      groupBox3.Padding = new Padding(2, 2, 2, 2);
       groupBox3.Size = new Size(156, 124);
       groupBox3.TabIndex = 10;
       groupBox3.TabStop = false;
@@ -148,7 +113,7 @@
       // ctrlKlicksEinlesen
       // 
       ctrlKlicksEinlesen.Location = new Point(14, 86);
-      ctrlKlicksEinlesen.Margin = new Padding(2);
+      ctrlKlicksEinlesen.Margin = new Padding(2, 2, 2, 2);
       ctrlKlicksEinlesen.Name = "ctrlKlicksEinlesen";
       ctrlKlicksEinlesen.Size = new Size(125, 25);
       ctrlKlicksEinlesen.TabIndex = 5;
@@ -159,7 +124,7 @@
       // ctrlImportiereBestandsdaten
       // 
       ctrlImportiereBestandsdaten.Location = new Point(14, 53);
-      ctrlImportiereBestandsdaten.Margin = new Padding(2);
+      ctrlImportiereBestandsdaten.Margin = new Padding(2, 2, 2, 2);
       ctrlImportiereBestandsdaten.Name = "ctrlImportiereBestandsdaten";
       ctrlImportiereBestandsdaten.Size = new Size(125, 25);
       ctrlImportiereBestandsdaten.TabIndex = 4;
@@ -170,7 +135,7 @@
       // ctrlCsvExportCyberLounge
       // 
       ctrlCsvExportCyberLounge.Location = new Point(14, 19);
-      ctrlCsvExportCyberLounge.Margin = new Padding(2);
+      ctrlCsvExportCyberLounge.Margin = new Padding(2, 2, 2, 2);
       ctrlCsvExportCyberLounge.Name = "ctrlCsvExportCyberLounge";
       ctrlCsvExportCyberLounge.Size = new Size(125, 26);
       ctrlCsvExportCyberLounge.TabIndex = 0;
@@ -181,7 +146,6 @@
       // 
       // ctrlPakete
       // 
-      ctrlPakete.Anchor = AnchorStyles.Left;
       ctrlPakete.Controls.Add(ctrl_PaketUebersicht);
       ctrlPakete.Controls.Add(ctrlBasisPaketZuordnen);
       ctrlPakete.Controls.Add(ctrlDemoPaketZuordnen);
@@ -189,10 +153,10 @@
       ctrlPakete.Controls.Add(ctrlStarterPaketZuordnen);
       ctrlPakete.Controls.Add(ctrlProfiPaketZuordnen);
       ctrlPakete.Enabled = false;
-      ctrlPakete.Location = new Point(652, 5);
-      ctrlPakete.Margin = new Padding(2);
+      ctrlPakete.Location = new Point(676, 18);
+      ctrlPakete.Margin = new Padding(2, 2, 2, 2);
       ctrlPakete.Name = "ctrlPakete";
-      ctrlPakete.Padding = new Padding(2);
+      ctrlPakete.Padding = new Padding(2, 2, 2, 2);
       ctrlPakete.Size = new Size(145, 133);
       ctrlPakete.TabIndex = 10;
       ctrlPakete.TabStop = false;
@@ -204,7 +168,7 @@
       ctrl_PaketUebersicht.BackColor = SystemColors.ActiveCaption;
       ctrl_PaketUebersicht.Enabled = false;
       ctrl_PaketUebersicht.Location = new Point(4, 103);
-      ctrl_PaketUebersicht.Margin = new Padding(2);
+      ctrl_PaketUebersicht.Margin = new Padding(2, 2, 2, 2);
       ctrl_PaketUebersicht.Name = "ctrl_PaketUebersicht";
       ctrl_PaketUebersicht.Size = new Size(137, 25);
       ctrl_PaketUebersicht.TabIndex = 9;
@@ -215,7 +179,7 @@
       // ctrlBasisPaketZuordnen
       // 
       ctrlBasisPaketZuordnen.Location = new Point(77, 21);
-      ctrlBasisPaketZuordnen.Margin = new Padding(2);
+      ctrlBasisPaketZuordnen.Margin = new Padding(2, 2, 2, 2);
       ctrlBasisPaketZuordnen.Name = "ctrlBasisPaketZuordnen";
       ctrlBasisPaketZuordnen.Size = new Size(60, 23);
       ctrlBasisPaketZuordnen.TabIndex = 8;
@@ -226,7 +190,7 @@
       // ctrlDemoPaketZuordnen
       // 
       ctrlDemoPaketZuordnen.Location = new Point(4, 21);
-      ctrlDemoPaketZuordnen.Margin = new Padding(2);
+      ctrlDemoPaketZuordnen.Margin = new Padding(2, 2, 2, 2);
       ctrlDemoPaketZuordnen.Name = "ctrlDemoPaketZuordnen";
       ctrlDemoPaketZuordnen.Size = new Size(60, 23);
       ctrlDemoPaketZuordnen.TabIndex = 7;
@@ -237,7 +201,7 @@
       // ctrlExpertenPaketZuordnen
       // 
       ctrlExpertenPaketZuordnen.Location = new Point(4, 75);
-      ctrlExpertenPaketZuordnen.Margin = new Padding(2);
+      ctrlExpertenPaketZuordnen.Margin = new Padding(2, 2, 2, 2);
       ctrlExpertenPaketZuordnen.Name = "ctrlExpertenPaketZuordnen";
       ctrlExpertenPaketZuordnen.Size = new Size(60, 23);
       ctrlExpertenPaketZuordnen.TabIndex = 4;
@@ -248,7 +212,7 @@
       // ctrlStarterPaketZuordnen
       // 
       ctrlStarterPaketZuordnen.Location = new Point(4, 48);
-      ctrlStarterPaketZuordnen.Margin = new Padding(2);
+      ctrlStarterPaketZuordnen.Margin = new Padding(2, 2, 2, 2);
       ctrlStarterPaketZuordnen.Name = "ctrlStarterPaketZuordnen";
       ctrlStarterPaketZuordnen.Size = new Size(60, 23);
       ctrlStarterPaketZuordnen.TabIndex = 6;
@@ -259,7 +223,7 @@
       // ctrlProfiPaketZuordnen
       // 
       ctrlProfiPaketZuordnen.Location = new Point(77, 48);
-      ctrlProfiPaketZuordnen.Margin = new Padding(2);
+      ctrlProfiPaketZuordnen.Margin = new Padding(2, 2, 2, 2);
       ctrlProfiPaketZuordnen.Name = "ctrlProfiPaketZuordnen";
       ctrlProfiPaketZuordnen.Size = new Size(60, 23);
       ctrlProfiPaketZuordnen.TabIndex = 5;
@@ -269,17 +233,16 @@
       // 
       // ctrlTags
       // 
-      ctrlTags.Anchor = AnchorStyles.Left;
       ctrlTags.Controls.Add(ctrlMarkiereAlsNovaplast);
       ctrlTags.Controls.Add(ctrlMarkiereAlsNurCyberLounge);
       ctrlTags.Controls.Add(ctrlMarkiereAlsPhishingMail);
       ctrlTags.Controls.Add(ctrlMarkiereAlsNurCyberPortal);
       ctrlTags.Controls.Add(ctrlMarkiereAdministrativeMail);
       ctrlTags.Enabled = false;
-      ctrlTags.Location = new Point(497, 5);
-      ctrlTags.Margin = new Padding(2);
+      ctrlTags.Location = new Point(513, 18);
+      ctrlTags.Margin = new Padding(2, 2, 2, 2);
       ctrlTags.Name = "ctrlTags";
-      ctrlTags.Padding = new Padding(2);
+      ctrlTags.Padding = new Padding(2, 2, 2, 2);
       ctrlTags.Size = new Size(145, 158);
       ctrlTags.TabIndex = 9;
       ctrlTags.TabStop = false;
@@ -288,7 +251,7 @@
       // ctrlMarkiereAlsNovaplast
       // 
       ctrlMarkiereAlsNovaplast.Location = new Point(8, 130);
-      ctrlMarkiereAlsNovaplast.Margin = new Padding(2);
+      ctrlMarkiereAlsNovaplast.Margin = new Padding(2, 2, 2, 2);
       ctrlMarkiereAlsNovaplast.Name = "ctrlMarkiereAlsNovaplast";
       ctrlMarkiereAlsNovaplast.Size = new Size(125, 23);
       ctrlMarkiereAlsNovaplast.TabIndex = 8;
@@ -299,7 +262,7 @@
       // ctrlMarkiereAlsNurCyberLounge
       // 
       ctrlMarkiereAlsNurCyberLounge.Location = new Point(8, 103);
-      ctrlMarkiereAlsNurCyberLounge.Margin = new Padding(2);
+      ctrlMarkiereAlsNurCyberLounge.Margin = new Padding(2, 2, 2, 2);
       ctrlMarkiereAlsNurCyberLounge.Name = "ctrlMarkiereAlsNurCyberLounge";
       ctrlMarkiereAlsNurCyberLounge.Size = new Size(125, 23);
       ctrlMarkiereAlsNurCyberLounge.TabIndex = 7;
@@ -310,7 +273,7 @@
       // ctrlMarkiereAlsPhishingMail
       // 
       ctrlMarkiereAlsPhishingMail.Location = new Point(8, 20);
-      ctrlMarkiereAlsPhishingMail.Margin = new Padding(2);
+      ctrlMarkiereAlsPhishingMail.Margin = new Padding(2, 2, 2, 2);
       ctrlMarkiereAlsPhishingMail.Name = "ctrlMarkiereAlsPhishingMail";
       ctrlMarkiereAlsPhishingMail.Size = new Size(125, 23);
       ctrlMarkiereAlsPhishingMail.TabIndex = 4;
@@ -321,7 +284,7 @@
       // ctrlMarkiereAlsNurCyberPortal
       // 
       ctrlMarkiereAlsNurCyberPortal.Location = new Point(8, 75);
-      ctrlMarkiereAlsNurCyberPortal.Margin = new Padding(2);
+      ctrlMarkiereAlsNurCyberPortal.Margin = new Padding(2, 2, 2, 2);
       ctrlMarkiereAlsNurCyberPortal.Name = "ctrlMarkiereAlsNurCyberPortal";
       ctrlMarkiereAlsNurCyberPortal.Size = new Size(125, 23);
       ctrlMarkiereAlsNurCyberPortal.TabIndex = 6;
@@ -332,7 +295,7 @@
       // ctrlMarkiereAdministrativeMail
       // 
       ctrlMarkiereAdministrativeMail.Location = new Point(8, 47);
-      ctrlMarkiereAdministrativeMail.Margin = new Padding(2);
+      ctrlMarkiereAdministrativeMail.Margin = new Padding(2, 2, 2, 2);
       ctrlMarkiereAdministrativeMail.Name = "ctrlMarkiereAdministrativeMail";
       ctrlMarkiereAdministrativeMail.Size = new Size(125, 23);
       ctrlMarkiereAdministrativeMail.TabIndex = 5;
@@ -342,7 +305,6 @@
       // 
       // groupBox1
       // 
-      groupBox1.Anchor = AnchorStyles.Left;
       groupBox1.Controls.Add(ctrlFilterPaket);
       groupBox1.Controls.Add(ctrlFilterStatus);
       groupBox1.Controls.Add(label6);
@@ -356,10 +318,10 @@
       groupBox1.Controls.Add(ctrlTemplatesFiltern);
       groupBox1.Controls.Add(ctrlTemplateFilterSubject);
       groupBox1.Controls.Add(ctrlTemplateFilterName);
-      groupBox1.Location = new Point(808, 5);
-      groupBox1.Margin = new Padding(2);
+      groupBox1.Location = new Point(839, 18);
+      groupBox1.Margin = new Padding(2, 2, 2, 2);
       groupBox1.Name = "groupBox1";
-      groupBox1.Padding = new Padding(2);
+      groupBox1.Padding = new Padding(2, 2, 2, 2);
       groupBox1.Size = new Size(474, 131);
       groupBox1.TabIndex = 10;
       groupBox1.TabStop = false;
@@ -369,7 +331,7 @@
       // 
       ctrlFilterPaket.FormattingEnabled = true;
       ctrlFilterPaket.Location = new Point(58, 20);
-      ctrlFilterPaket.Margin = new Padding(2);
+      ctrlFilterPaket.Margin = new Padding(2, 2, 2, 2);
       ctrlFilterPaket.Name = "ctrlFilterPaket";
       ctrlFilterPaket.Size = new Size(175, 23);
       ctrlFilterPaket.TabIndex = 13;
@@ -379,7 +341,7 @@
       ctrlFilterStatus.FormattingEnabled = true;
       ctrlFilterStatus.Items.AddRange(new object[] { "alle", "einzustufen", "eingestuft" });
       ctrlFilterStatus.Location = new Point(58, 73);
-      ctrlFilterStatus.Margin = new Padding(2);
+      ctrlFilterStatus.Margin = new Padding(2, 2, 2, 2);
       ctrlFilterStatus.Name = "ctrlFilterStatus";
       ctrlFilterStatus.Size = new Size(175, 23);
       ctrlFilterStatus.TabIndex = 12;
@@ -420,7 +382,7 @@
       // 
       ctrlTemplateFilterTags.Anchor = AnchorStyles.Left | AnchorStyles.Right;
       ctrlTemplateFilterTags.Location = new Point(58, 48);
-      ctrlTemplateFilterTags.Margin = new Padding(2);
+      ctrlTemplateFilterTags.Margin = new Padding(2, 2, 2, 2);
       ctrlTemplateFilterTags.Name = "ctrlTemplateFilterTags";
       ctrlTemplateFilterTags.Size = new Size(175, 23);
       ctrlTemplateFilterTags.TabIndex = 8;
@@ -440,7 +402,7 @@
       // 
       ctrlTemplateFilterInhalt.Anchor = AnchorStyles.Left | AnchorStyles.Right;
       ctrlTemplateFilterInhalt.Location = new Point(316, 73);
-      ctrlTemplateFilterInhalt.Margin = new Padding(2);
+      ctrlTemplateFilterInhalt.Margin = new Padding(2, 2, 2, 2);
       ctrlTemplateFilterInhalt.Name = "ctrlTemplateFilterInhalt";
       ctrlTemplateFilterInhalt.Size = new Size(147, 23);
       ctrlTemplateFilterInhalt.TabIndex = 5;
@@ -470,7 +432,7 @@
       // 
       ctrlTemplatesFiltern.Anchor = AnchorStyles.Left;
       ctrlTemplatesFiltern.Location = new Point(316, 102);
-      ctrlTemplatesFiltern.Margin = new Padding(2);
+      ctrlTemplatesFiltern.Margin = new Padding(2, 2, 2, 2);
       ctrlTemplatesFiltern.Name = "ctrlTemplatesFiltern";
       ctrlTemplatesFiltern.Size = new Size(146, 23);
       ctrlTemplatesFiltern.TabIndex = 2;
@@ -482,7 +444,7 @@
       // 
       ctrlTemplateFilterSubject.Anchor = AnchorStyles.Left | AnchorStyles.Right;
       ctrlTemplateFilterSubject.Location = new Point(316, 47);
-      ctrlTemplateFilterSubject.Margin = new Padding(2);
+      ctrlTemplateFilterSubject.Margin = new Padding(2, 2, 2, 2);
       ctrlTemplateFilterSubject.Name = "ctrlTemplateFilterSubject";
       ctrlTemplateFilterSubject.Size = new Size(147, 23);
       ctrlTemplateFilterSubject.TabIndex = 1;
@@ -492,7 +454,7 @@
       // 
       ctrlTemplateFilterName.Anchor = AnchorStyles.Left | AnchorStyles.Right;
       ctrlTemplateFilterName.Location = new Point(316, 22);
-      ctrlTemplateFilterName.Margin = new Padding(2);
+      ctrlTemplateFilterName.Margin = new Padding(2, 2, 2, 2);
       ctrlTemplateFilterName.Name = "ctrlTemplateFilterName";
       ctrlTemplateFilterName.Size = new Size(147, 23);
       ctrlTemplateFilterName.TabIndex = 0;
@@ -500,13 +462,12 @@
       // 
       // ctrlDatenLadenGruppe
       // 
-      ctrlDatenLadenGruppe.Anchor = AnchorStyles.Left;
       ctrlDatenLadenGruppe.Controls.Add(ctrlTemplatesLadenAusDatei);
       ctrlDatenLadenGruppe.Controls.Add(ctrlTemplatesLadenVonSendGrid);
-      ctrlDatenLadenGruppe.Location = new Point(8, 5);
-      ctrlDatenLadenGruppe.Margin = new Padding(2);
+      ctrlDatenLadenGruppe.Location = new Point(4, 18);
+      ctrlDatenLadenGruppe.Margin = new Padding(2, 2, 2, 2);
       ctrlDatenLadenGruppe.Name = "ctrlDatenLadenGruppe";
-      ctrlDatenLadenGruppe.Padding = new Padding(2);
+      ctrlDatenLadenGruppe.Padding = new Padding(2, 2, 2, 2);
       ctrlDatenLadenGruppe.Size = new Size(156, 124);
       ctrlDatenLadenGruppe.TabIndex = 9;
       ctrlDatenLadenGruppe.TabStop = false;
@@ -515,7 +476,7 @@
       // ctrlTemplatesLadenAusDatei
       // 
       ctrlTemplatesLadenAusDatei.Location = new Point(13, 47);
-      ctrlTemplatesLadenAusDatei.Margin = new Padding(2);
+      ctrlTemplatesLadenAusDatei.Margin = new Padding(2, 2, 2, 2);
       ctrlTemplatesLadenAusDatei.Name = "ctrlTemplatesLadenAusDatei";
       ctrlTemplatesLadenAusDatei.Size = new Size(125, 23);
       ctrlTemplatesLadenAusDatei.TabIndex = 4;
@@ -526,7 +487,7 @@
       // ctrlTemplatesLadenVonSendGrid
       // 
       ctrlTemplatesLadenVonSendGrid.Location = new Point(14, 19);
-      ctrlTemplatesLadenVonSendGrid.Margin = new Padding(2);
+      ctrlTemplatesLadenVonSendGrid.Margin = new Padding(2, 2, 2, 2);
       ctrlTemplatesLadenVonSendGrid.Name = "ctrlTemplatesLadenVonSendGrid";
       ctrlTemplatesLadenVonSendGrid.Size = new Size(125, 23);
       ctrlTemplatesLadenVonSendGrid.TabIndex = 0;
@@ -537,17 +498,16 @@
       // 
       // ctrlAktionen
       // 
-      ctrlAktionen.Anchor = AnchorStyles.Left;
       ctrlAktionen.Controls.Add(ctrlJsonBearbeiten);
       ctrlAktionen.Controls.Add(ctrlTemplateArchivieren);
       ctrlAktionen.Controls.Add(ctrlOeffneEditor);
       ctrlAktionen.Controls.Add(ctrlOeffneWebansicht);
       ctrlAktionen.Controls.Add(ctrlOeffnePreview);
       ctrlAktionen.Enabled = false;
-      ctrlAktionen.Location = new Point(342, 5);
-      ctrlAktionen.Margin = new Padding(2);
+      ctrlAktionen.Location = new Point(351, 18);
+      ctrlAktionen.Margin = new Padding(2, 2, 2, 2);
       ctrlAktionen.Name = "ctrlAktionen";
-      ctrlAktionen.Padding = new Padding(2);
+      ctrlAktionen.Padding = new Padding(2, 2, 2, 2);
       ctrlAktionen.Size = new Size(145, 133);
       ctrlAktionen.TabIndex = 8;
       ctrlAktionen.TabStop = false;
@@ -556,7 +516,7 @@
       // ctrlJsonBearbeiten
       // 
       ctrlJsonBearbeiten.Location = new Point(8, 102);
-      ctrlJsonBearbeiten.Margin = new Padding(2);
+      ctrlJsonBearbeiten.Margin = new Padding(2, 2, 2, 2);
       ctrlJsonBearbeiten.Name = "ctrlJsonBearbeiten";
       ctrlJsonBearbeiten.Size = new Size(38, 23);
       ctrlJsonBearbeiten.TabIndex = 8;
@@ -567,7 +527,7 @@
       // ctrlTemplateArchivieren
       // 
       ctrlTemplateArchivieren.Location = new Point(50, 103);
-      ctrlTemplateArchivieren.Margin = new Padding(2);
+      ctrlTemplateArchivieren.Margin = new Padding(2, 2, 2, 2);
       ctrlTemplateArchivieren.Name = "ctrlTemplateArchivieren";
       ctrlTemplateArchivieren.Size = new Size(83, 23);
       ctrlTemplateArchivieren.TabIndex = 7;
@@ -578,7 +538,7 @@
       // ctrlOeffneEditor
       // 
       ctrlOeffneEditor.Location = new Point(8, 20);
-      ctrlOeffneEditor.Margin = new Padding(2);
+      ctrlOeffneEditor.Margin = new Padding(2, 2, 2, 2);
       ctrlOeffneEditor.Name = "ctrlOeffneEditor";
       ctrlOeffneEditor.Size = new Size(125, 23);
       ctrlOeffneEditor.TabIndex = 4;
@@ -589,7 +549,7 @@
       // ctrlOeffneWebansicht
       // 
       ctrlOeffneWebansicht.Location = new Point(8, 75);
-      ctrlOeffneWebansicht.Margin = new Padding(2);
+      ctrlOeffneWebansicht.Margin = new Padding(2, 2, 2, 2);
       ctrlOeffneWebansicht.Name = "ctrlOeffneWebansicht";
       ctrlOeffneWebansicht.Size = new Size(125, 23);
       ctrlOeffneWebansicht.TabIndex = 6;
@@ -600,61 +560,13 @@
       // ctrlOeffnePreview
       // 
       ctrlOeffnePreview.Location = new Point(8, 47);
-      ctrlOeffnePreview.Margin = new Padding(2);
+      ctrlOeffnePreview.Margin = new Padding(2, 2, 2, 2);
       ctrlOeffnePreview.Name = "ctrlOeffnePreview";
       ctrlOeffnePreview.Size = new Size(125, 23);
       ctrlOeffnePreview.TabIndex = 5;
       ctrlOeffnePreview.Text = "Öffne Preview";
       ctrlOeffnePreview.UseVisualStyleBackColor = true;
       ctrlOeffnePreview.Click += ctrlOeffnePreview_Click;
-      // 
-      // splitContainer2
-      // 
-      splitContainer2.Dock = DockStyle.Fill;
-      splitContainer2.FixedPanel = FixedPanel.Panel2;
-      splitContainer2.Location = new Point(0, 0);
-      splitContainer2.Margin = new Padding(2);
-      splitContainer2.Name = "splitContainer2";
-      splitContainer2.Orientation = Orientation.Horizontal;
-      // 
-      // splitContainer2.Panel1
-      // 
-      splitContainer2.Panel1.Controls.Add(ctrlTemplatesListe);
-      // 
-      // splitContainer2.Panel2
-      // 
-      splitContainer2.Panel2.Controls.Add(ctrlMeldungen);
-      splitContainer2.Size = new Size(1440, 593);
-      splitContainer2.SplitterDistance = 521;
-      splitContainer2.SplitterWidth = 2;
-      splitContainer2.TabIndex = 1;
-      // 
-      // ctrlTemplatesListe
-      // 
-      ctrlTemplatesListe.AllowUserToOrderColumns = true;
-      ctrlTemplatesListe.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-      ctrlTemplatesListe.Dock = DockStyle.Fill;
-      ctrlTemplatesListe.Location = new Point(0, 0);
-      ctrlTemplatesListe.Margin = new Padding(2);
-      ctrlTemplatesListe.Name = "ctrlTemplatesListe";
-      ctrlTemplatesListe.RowHeadersWidth = 62;
-      ctrlTemplatesListe.Size = new Size(1440, 521);
-      ctrlTemplatesListe.TabIndex = 0;
-      ctrlTemplatesListe.CellMouseUp += ctrlTemplatesListe_CellMouseUp;
-      ctrlTemplatesListe.RowStateChanged += ctrlTemplatesListe_RowStateChanged;
-      ctrlTemplatesListe.DoubleClick += ctrlTemplatesListe_DoubleClick;
-      // 
-      // ctrlMeldungen
-      // 
-      ctrlMeldungen.Dock = DockStyle.Fill;
-      ctrlMeldungen.FormattingEnabled = true;
-      ctrlMeldungen.ItemHeight = 15;
-      ctrlMeldungen.Location = new Point(0, 0);
-      ctrlMeldungen.Margin = new Padding(2);
-      ctrlMeldungen.Name = "ctrlMeldungen";
-      ctrlMeldungen.ScrollAlwaysVisible = true;
-      ctrlMeldungen.Size = new Size(1440, 70);
-      ctrlMeldungen.TabIndex = 3;
       // 
       // tbcManager
       // 
@@ -669,21 +581,50 @@
       // 
       // tbpManager
       // 
-      tbpManager.Controls.Add(splitContainer1);
+      tbpManager.Controls.Add(ctrlTemplatesListe);
+      tbpManager.Controls.Add(panel1);
+      tbpManager.Controls.Add(ctrlMeldungen);
       tbpManager.Location = new Point(4, 24);
       tbpManager.Name = "tbpManager";
-      tbpManager.Padding = new Padding(3);
+      tbpManager.Padding = new Padding(3, 3, 3, 3);
       tbpManager.Size = new Size(1446, 776);
       tbpManager.TabIndex = 0;
       tbpManager.Text = "Manager";
       tbpManager.UseVisualStyleBackColor = true;
+      // 
+      // ctrlMeldungen
+      // 
+      ctrlMeldungen.Dock = DockStyle.Bottom;
+      ctrlMeldungen.FormattingEnabled = true;
+      ctrlMeldungen.ItemHeight = 15;
+      ctrlMeldungen.Location = new Point(3, 694);
+      ctrlMeldungen.Margin = new Padding(2);
+      ctrlMeldungen.Name = "ctrlMeldungen";
+      ctrlMeldungen.ScrollAlwaysVisible = true;
+      ctrlMeldungen.Size = new Size(1440, 79);
+      ctrlMeldungen.TabIndex = 11;
+      // 
+      // ctrlTemplatesListe
+      // 
+      ctrlTemplatesListe.AllowUserToOrderColumns = true;
+      ctrlTemplatesListe.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+      ctrlTemplatesListe.Dock = DockStyle.Fill;
+      ctrlTemplatesListe.Location = new Point(3, 184);
+      ctrlTemplatesListe.Margin = new Padding(2, 2, 2, 2);
+      ctrlTemplatesListe.Name = "ctrlTemplatesListe";
+      ctrlTemplatesListe.RowHeadersWidth = 62;
+      ctrlTemplatesListe.Size = new Size(1440, 510);
+      ctrlTemplatesListe.TabIndex = 0;
+      ctrlTemplatesListe.CellMouseUp += ctrlTemplatesListe_CellMouseUp;
+      ctrlTemplatesListe.RowStateChanged += ctrlTemplatesListe_RowStateChanged;
+      ctrlTemplatesListe.DoubleClick += ctrlTemplatesListe_DoubleClick;
       // 
       // tbpEinstellungen
       // 
       tbpEinstellungen.Controls.Add(groupBox2);
       tbpEinstellungen.Location = new Point(4, 24);
       tbpEinstellungen.Name = "tbpEinstellungen";
-      tbpEinstellungen.Padding = new Padding(3);
+      tbpEinstellungen.Padding = new Padding(3, 3, 3, 3);
       tbpEinstellungen.Size = new Size(1446, 776);
       tbpEinstellungen.TabIndex = 1;
       tbpEinstellungen.Text = "Einstellungen";
@@ -757,6 +698,20 @@
       label7.TabIndex = 0;
       label7.Text = "Api Key:";
       // 
+      // panel1
+      // 
+      panel1.Controls.Add(ctrlDatenLadenGruppe);
+      panel1.Controls.Add(ctrlAktionen);
+      panel1.Controls.Add(ctrlTags);
+      panel1.Controls.Add(groupBox1);
+      panel1.Controls.Add(groupBox3);
+      panel1.Controls.Add(ctrlPakete);
+      panel1.Dock = DockStyle.Top;
+      panel1.Location = new Point(3, 3);
+      panel1.Name = "panel1";
+      panel1.Size = new Size(1440, 181);
+      panel1.TabIndex = 12;
+      // 
       // MainForm
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
@@ -767,10 +722,6 @@
       Name = "MainForm";
       Text = "SendGrid Template Manager";
       Load += FormMain_Load;
-      splitContainer1.Panel1.ResumeLayout(false);
-      splitContainer1.Panel2.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
-      splitContainer1.ResumeLayout(false);
       groupBox3.ResumeLayout(false);
       ctrlPakete.ResumeLayout(false);
       ctrlTags.ResumeLayout(false);
@@ -778,25 +729,18 @@
       groupBox1.PerformLayout();
       ctrlDatenLadenGruppe.ResumeLayout(false);
       ctrlAktionen.ResumeLayout(false);
-      splitContainer2.Panel1.ResumeLayout(false);
-      splitContainer2.Panel2.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize)splitContainer2).EndInit();
-      splitContainer2.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize)ctrlTemplatesListe).EndInit();
       tbcManager.ResumeLayout(false);
       tbpManager.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)ctrlTemplatesListe).EndInit();
       tbpEinstellungen.ResumeLayout(false);
       groupBox2.ResumeLayout(false);
       groupBox2.PerformLayout();
+      panel1.ResumeLayout(false);
       ResumeLayout(false);
     }
 
     #endregion
-
-    private SplitContainer splitContainer1;
-        private Button ctrlTemplatesLadenVonSendGrid;
-        private DataGridView ctrlTemplatesListe;
-        private ListBox ctrlMeldungen;
+    private Button ctrlTemplatesLadenVonSendGrid;
         private GroupBox ctrlAktionen;
         private Button ctrlTemplateArchivieren;
         private Button ctrlOeffneEditor;
@@ -817,7 +761,6 @@
         private Button ctrlMarkiereAlsNurCyberPortal;
         private Button ctrlMarkiereAdministrativeMail;
         private Button ctrlTemplatesLadenAusDatei;
-        private SplitContainer splitContainer2;
         private GroupBox ctrlPakete;
         private Button ctrlBasisPaketZuordnen;
         private Button ctrlDemoPaketZuordnen;
@@ -848,5 +791,8 @@
     private Button btnDatenbankAuswählen;
     private Button btnEinstellungenSpeichern;
     private FolderBrowserDialog dlgDatenbankOrdner;
+    private DataGridView ctrlTemplatesListe;
+    private ListBox ctrlMeldungen;
+    private Panel panel1;
   }
 }
