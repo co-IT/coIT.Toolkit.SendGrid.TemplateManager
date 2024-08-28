@@ -22,6 +22,7 @@ public partial class MainForm : Form
   private ManagedTemplateRepository _managedTemplateRepository;
   private SendGridService _sendGridService;
   private bool BestandsdatenImportiert = false;
+  private Dictionary<string, string> _zuordnungen; //Zuordnungen TemplateId <-> InterneId
 
   public MainForm()
   {
@@ -293,27 +294,12 @@ public partial class MainForm : Form
 
   private void ctrlOeffneEditor_Click(object sender, EventArgs e)
   {
-    StarteBrowserMit(_selektiertesTemplate.SendGridTemplate.EditorUri.AbsoluteUri);
+    Utils.OpenInBrowser(_selektiertesTemplate.SendGridTemplate.EditorUri.AbsoluteUri);
   }
 
   private void ctrlOeffnePreview_Click(object sender, EventArgs e)
   {
-    StarteBrowserMit(_selektiertesTemplate.SendGridTemplate.PreviewUri.AbsoluteUri);
-  }
-
-  private static void StarteBrowserMit(string url)
-  {
-    var args = $"/c start msedge {url}";
-
-    var psi = new ProcessStartInfo("cmd.exe")
-    {
-      Arguments = args,
-      UseShellExecute = false,
-      WindowStyle = ProcessWindowStyle.Normal,
-      CreateNoWindow = false,
-    };
-
-    Process.Start(psi);
+    Utils.OpenInBrowser(_selektiertesTemplate.SendGridTemplate.PreviewUri.AbsoluteUri);
   }
 
   private async void ctrlOeffneWebansicht_Click(object sender, EventArgs e)
@@ -327,11 +313,8 @@ public partial class MainForm : Form
     var uri = new Uri(file).AbsoluteUri;
 
     await File.WriteAllTextAsync(file, templateOderFehler.Value.HtmlContent, Encoding.UTF8);
-    var args = $"/c start msedge {uri}";
 
-    var psi = new ProcessStartInfo("cmd.exe") { Arguments = args, UseShellExecute = true };
-
-    Process.Start(psi);
+    Utils.OpenInBrowser(uri);
   }
 
   private async void ctrlTemplatesListe_DoubleClick(object sender, EventArgs e)
@@ -486,17 +469,33 @@ public partial class MainForm : Form
 
   private async void ctrlCsvExportCyberLounge_Click(object sender, EventArgs e)
   {
-    if (!BestandsdatenImportiert)
+    if (!BestandsdatenImportiert || _zuordnungen.Count == 0)
     {
       MessageBox.Show("Zuerst die Bestandsdaten importieren!");
       return;
     }
+
+    if (exportFolderDialog.ShowDialog() != DialogResult.OK)
+      return;
+
+    var exportDirectory = exportFolderDialog.SelectedPath;
 
     var angezeigteTemplates = FilterAnwenden();
     if (angezeigteTemplates.Any(t => t.Absender is null))
     {
       MessageBox.Show(
         "Es können nur Templates exportiert werden, bei denen der Absender gepflegt ist.",
+        "Aktion nicht möglich",
+        MessageBoxButtons.OK,
+        MessageBoxIcon.Asterisk
+      );
+      return;
+    }
+
+    if (angezeigteTemplates.Any(t => !t.Tags.Contains("Phishing-Mail")))
+    {
+      MessageBox.Show(
+        "Es können nur Phishing-Templates exportiert werden. Fügen Sie ggf. den Phishing-Mail Tag hinzu.",
         "Aktion nicht möglich",
         MessageBoxButtons.OK,
         MessageBoxIcon.Asterisk
@@ -515,13 +514,11 @@ public partial class MainForm : Form
       return;
     }
 
-    var zuordnungen = await ZuordnungenEinlesen();
-
     var header = "Id;TemplateId;Title;SenderEmail;SenderName;LevelOfDifficulty;BusinessSector;Department;Created;Link";
     var csvZeilen = angezeigteTemplates
       .Select(t =>
       {
-        if (zuordnungen.TryGetValue(t.SendGridTemplate.TemplateId, out var interneTemplateId))
+        if (_zuordnungen.TryGetValue(t.SendGridTemplate.TemplateId, out var interneTemplateId))
           return t.ToCsvExport(interneTemplateId);
 
         return t.ToCsvExport(Guid.NewGuid().ToString());
@@ -529,7 +526,7 @@ public partial class MainForm : Form
       .Where(zeile => !string.IsNullOrWhiteSpace(zeile))
       .Aggregate(header, (aktuell, neu) => $"{aktuell}\r\n{neu}");
 
-    var csvDatei = "../phishing-mails-export.csv";
+    var csvDatei = Path.Combine(exportDirectory, "PhishingMailTemplates-Export.csv");
     await File.WriteAllTextAsync(csvDatei, csvZeilen, Encoding.UTF8, CancellationToken.None);
     MeldungAnzeigen("CSV exportiert: " + csvDatei);
 
@@ -539,7 +536,7 @@ public partial class MainForm : Form
     var sqlZeilen = angezeigteTemplates
       .Select(t =>
       {
-        if (zuordnungen.TryGetValue(t.SendGridTemplate.TemplateId, out var interneTemplateId))
+        if (_zuordnungen.TryGetValue(t.SendGridTemplate.TemplateId, out var interneTemplateId))
           return t.ToSqlExport(interneTemplateId);
 
         return t.ToSqlExport(Guid.NewGuid().ToString());
@@ -549,14 +546,17 @@ public partial class MainForm : Form
     sqlBuilder.AppendJoin(Environment.NewLine, sqlZeilen);
     sqlBuilder.AppendLine("COMMIT;");
 
-    var sqlDatei = "../phishing-mails-export.sql";
+    var sqlDatei = Path.Combine(exportDirectory, "PhishingMailTemplates-Export.sql");
     await File.WriteAllTextAsync(sqlDatei, sqlBuilder.ToString(), Encoding.UTF8, CancellationToken.None);
     MeldungAnzeigen("SQL exportiert: " + sqlDatei);
   }
 
   private async void ctrlImportiereBestandsdaten_Click(object sender, EventArgs e)
   {
-    var datei = "../phishing-mails-import.csv";
+    if (importFileDialog.ShowDialog() != DialogResult.OK)
+      return;
+
+    var datei = importFileDialog.FileName;
 
     if (!File.Exists(datei))
       MessageBox.Show(
@@ -586,24 +586,55 @@ public partial class MainForm : Form
       MeldungAnzeigen($"{template.Absender}in Template {template.SendGridTemplate.Name} aktualisiert.");
     }
 
+    _zuordnungen = await ZuordnungenEinlesen(datei);
+
+    ValidateImport();
+
     AktualisiereTabelle();
 
     BestandsdatenImportiert = true;
   }
 
-  private static async Task<Dictionary<string, string>> ZuordnungenEinlesen()
+  private void ValidateImport()
   {
-    var datei = "../phishing-mails-import.csv";
+    var phishingTemplates = _alleTemplates.Where(x => x.Tags.Contains("Phishing-Mail")).ToList();
 
-    if (!File.Exists(datei))
+    var notInManager = _zuordnungen
+      .Select(x => x.Key.ToLower())
+      .Except(phishingTemplates.Select(x => x.SendGridTemplate.TemplateId.ToLower()))
+      .ToList();
+
+    var notInImport = phishingTemplates
+      .Select(x => x.SendGridTemplate.TemplateId.ToLower())
+      .Except(_zuordnungen.Select(x => x.Key.ToLower()))
+      .ToList();
+
+    var sb = new StringBuilder();
+    sb.AppendLine(
+      "Achtung: Die Anzahl der Phishing-Templates im Import und Manager hat eine größere Abweichung. Bitte die folgenden Daten prüfen:"
+    );
+    sb.AppendLine();
+    sb.AppendLine($"Anzahl Phishing-Templates im Import aber nicht im Manager enthalten: {notInManager.Count}");
+    notInManager.ForEach(id => sb.AppendLine(id));
+    sb.AppendLine();
+    sb.AppendLine($"Anzahl Phishing-Templates im Manager aber nicht im Import enthalten: {notInImport.Count}");
+    notInImport.ForEach(id => sb.AppendLine(id));
+
+    if (notInManager.Count > 5 || notInImport.Count > 5)
+      MessageBox.Show(sb.ToString(), "Warnung", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+  }
+
+  private static async Task<Dictionary<string, string>> ZuordnungenEinlesen(string importPath)
+  {
+    if (!File.Exists(importPath))
       MessageBox.Show(
-        "Datei nicht gefunden: " + datei,
+        "Datei nicht gefunden: " + importPath,
         "Aktion nicht erfolgreich",
         MessageBoxButtons.OK,
         MessageBoxIcon.Error
       );
 
-    var zeilen = await File.ReadAllLinesAsync(datei, Encoding.UTF8, CancellationToken.None);
+    var zeilen = await File.ReadAllLinesAsync(importPath, Encoding.UTF8, CancellationToken.None);
 
     var zuordnungen = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
     foreach (var zeile in zeilen.Skip(1))
@@ -619,7 +650,16 @@ public partial class MainForm : Form
 
   private async void ctrlKlicksEinlesen_Click(object sender, EventArgs e)
   {
-    var datei = "../klicks.csv";
+    if (!BestandsdatenImportiert || _zuordnungen.Count == 0)
+    {
+      MessageBox.Show("Zuerst die Bestandsdaten importieren!");
+      return;
+    }
+
+    if (klicksFileDialog.ShowDialog() != DialogResult.OK)
+      return;
+
+    var datei = klicksFileDialog.FileName;
 
     if (!File.Exists(datei))
       MessageBox.Show(
@@ -637,8 +677,7 @@ public partial class MainForm : Form
     {
       var werte = zeile.Split(";");
 
-      var klick = 0;
-      int.TryParse(werte[1].Trim(), out klick);
+      int.TryParse(werte[1].Trim(), out var klick);
 
       var interndeId = werte[4].Trim();
 
@@ -649,15 +688,14 @@ public partial class MainForm : Form
       versandt[interndeId] += 1;
     }
 
-    var zuordnungen = await ZuordnungenEinlesen();
     foreach (var template in _alleTemplates)
     {
       var templateId = template.SendGridTemplate.TemplateId.ToUpper();
 
-      if (!zuordnungen.ContainsKey(templateId))
+      if (!_zuordnungen.ContainsKey(templateId))
         continue;
 
-      var id = zuordnungen[templateId];
+      var id = _zuordnungen[templateId];
 
       if (versandt.ContainsKey(id))
         template.Versandt = versandt[id];
@@ -741,9 +779,9 @@ public partial class MainForm : Form
 
   private void btnDatenbankAuswählen_Click(object sender, EventArgs e)
   {
-    DialogResult result = dlgDatenbankOrdner.ShowDialog();
+    var dialogResult = dlgDatenbankOrdner.ShowDialog();
 
-    if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(dlgDatenbankOrdner.SelectedPath))
+    if (dialogResult == DialogResult.OK && !string.IsNullOrWhiteSpace(dlgDatenbankOrdner.SelectedPath))
     {
       tbxDatenbankPfad.Text = dlgDatenbankOrdner.SelectedPath;
     }

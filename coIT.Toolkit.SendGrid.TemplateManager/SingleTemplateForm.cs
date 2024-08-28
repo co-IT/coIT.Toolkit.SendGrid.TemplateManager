@@ -190,7 +190,7 @@ public partial class SingleTemplateForm : Form
   {
     var url = Template.SendGridTemplate.EditorUri.AbsoluteUri;
 
-    Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+    Utils.OpenInBrowser(url);
   }
 
   private async void btnSendTemplate_Click(object sender, EventArgs e)
