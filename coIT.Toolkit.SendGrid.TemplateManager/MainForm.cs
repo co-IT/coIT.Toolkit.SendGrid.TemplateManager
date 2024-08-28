@@ -21,6 +21,7 @@ public partial class MainForm : Form
   private readonly EnvironmentManager _environmentManager;
   private ManagedTemplateRepository _managedTemplateRepository;
   private SendGridService _sendGridService;
+  private bool BestandsdatenImportiert = false;
 
   public MainForm()
   {
@@ -485,6 +486,12 @@ public partial class MainForm : Form
 
   private async void ctrlCsvExportCyberLounge_Click(object sender, EventArgs e)
   {
+    if (!BestandsdatenImportiert)
+    {
+      MessageBox.Show("Zuerst die Bestandsdaten importieren!");
+      return;
+    }
+
     var angezeigteTemplates = FilterAnwenden();
     if (angezeigteTemplates.Any(t => t.Absender is null))
     {
@@ -580,6 +587,8 @@ public partial class MainForm : Form
     }
 
     AktualisiereTabelle();
+
+    BestandsdatenImportiert = true;
   }
 
   private static async Task<Dictionary<string, string>> ZuordnungenEinlesen()
