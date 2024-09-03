@@ -9,8 +9,8 @@ public partial class SendTemplateForm : Form
 
   public SendTemplateForm(ManagedTemplate template)
   {
-    _template = template;
     InitializeComponent();
+    _template = template;
   }
 
   public SendOptions SendOptions { get; set; }
@@ -34,18 +34,17 @@ public partial class SendTemplateForm : Form
 
   private Result ValidateSendOptions(SendOptions sendOptions)
   {
-    if (!MailAddress.TryCreate(sendOptions.RecipientEmail, out _))
-      return Result.Failure("Die E-Mail-Adresse ist ungültig.");
-
-    return Result.Success();
+    return !MailAddress.TryCreate(sendOptions.RecipientEmail, out _)
+      ? Result.Failure("Die E-Mail-Adresse ist ungültig.")
+      : Result.Success();
   }
 
   private void SendTemplateForm_Load(object sender, EventArgs e)
   {
     var sendOptions = new SendOptions
     {
-      SenderName = _template.Absender.Name,
-      SenderEmail = _template.Absender.Adresse,
+      SenderName = _template.Absender?.Name ?? string.Empty,
+      SenderEmail = _template.Absender?.Adresse ?? string.Empty,
     };
 
     propertyGrid.SelectedObject = sendOptions;

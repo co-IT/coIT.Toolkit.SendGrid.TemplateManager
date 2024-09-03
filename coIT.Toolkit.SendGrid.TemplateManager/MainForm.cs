@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Text;
 using coIT.Libraries.ConfigurationManager;
 using coIT.Libraries.ConfigurationManager.Cryptography;
@@ -16,17 +15,19 @@ public partial class MainForm : Form
   private ManagedTemplate _selektiertesTemplate;
   private int _selektierteZeile;
   private Func<ManagedTemplate, object> _sortierung = t => t.SendGridTemplate.Name;
-  private SortableBindingList<TabellenEintrag> _tabellenListe = [];
+  private readonly SortableBindingList<TabellenEintrag> _tabellenListe = [];
 
   private readonly EnvironmentManager _environmentManager;
   private ManagedTemplateRepository _managedTemplateRepository;
   private SendGridService _sendGridService;
-  private bool BestandsdatenImportiert = false;
-  private Dictionary<string, string> _zuordnungen; //Zuordnungen TemplateId <-> InterneId
+  private bool _bestandsdatenImportiert;
+  private Dictionary<string, string> _zuordnungen = new(); //Zuordnungen TemplateId <-> InterneId
 
-  public MainForm()
+  public MainForm(CancellationTokenSource cts)
   {
     InitializeComponent();
+
+    _cts = cts;
 
     var schlüssel =
       "eyJJdGVtMSI6Ijk2QUttM1JmZEs3OG55NGgxTzUrb1NlVm5PQm1GNnhiTHR3TzRmY3BPckE9IiwiSXRlbTIiOiJZdVo1eC9JdXRWQzg2RXJFRTQzWHF3PT0ifQ==";
@@ -101,8 +102,6 @@ public partial class MainForm : Form
 
   private async void LadeTemplatesVonSendGrid(object sender, EventArgs e)
   {
-    _cts = new CancellationTokenSource();
-
     await LadeTemplatesOhneInhalte(_cts.Token)
       .Tap(AktualisiereTabelle)
       .Tap(() => LadeInhalteVonTemplates(_cts.Token))
@@ -160,62 +159,69 @@ public partial class MainForm : Form
     IEnumerable<ManagedTemplate> templates = _alleTemplates;
     MeldungAnzeigen($"Templates insgesamt: {templates.Count()}");
 
-    templates = templates.Where(t => !t.Archiviert);
+    templates = templates.Where(t => !t.Archiviert).ToList();
     MeldungAnzeigen($"ohne archivierte Templates: {templates.Count()}");
 
     if (!string.IsNullOrWhiteSpace(ctrlTemplateFilterName.Text.Trim()))
     {
-      templates = templates.Where(t =>
-        (t.SendGridTemplate?.Name ?? string.Empty).Contains(
-          ctrlTemplateFilterName.Text.Trim(),
-          StringComparison.InvariantCultureIgnoreCase
+      templates = templates
+        .Where(t =>
+          (t.SendGridTemplate.Name).Contains(
+            ctrlTemplateFilterName.Text.Trim(),
+            StringComparison.InvariantCultureIgnoreCase
+          )
         )
-      );
+        .ToList();
 
       MeldungAnzeigen($"nach Namen-Filterung: {templates.Count()}");
     }
 
     if (!string.IsNullOrWhiteSpace(ctrlTemplateFilterSubject.Text.Trim()))
     {
-      templates = templates.Where(t =>
-        (t.SendGridTemplate?.Subject ?? string.Empty).Contains(
-          ctrlTemplateFilterSubject.Text.Trim(),
-          StringComparison.InvariantCultureIgnoreCase
+      templates = templates
+        .Where(t =>
+          (t.SendGridTemplate.Subject).Contains(
+            ctrlTemplateFilterSubject.Text.Trim(),
+            StringComparison.InvariantCultureIgnoreCase
+          )
         )
-      );
+        .ToList();
       MeldungAnzeigen($"nach Subject-Filterung: {templates.Count()}");
     }
 
     if (!string.IsNullOrWhiteSpace(ctrlTemplateFilterInhalt.Text.Trim()))
     {
-      templates = templates.Where(t =>
-        (t.PlainContent ?? string.Empty).Contains(
-          ctrlTemplateFilterInhalt.Text.Trim(),
-          StringComparison.InvariantCultureIgnoreCase
+      templates = templates
+        .Where(t =>
+          (t.PlainContent).Contains(ctrlTemplateFilterInhalt.Text.Trim(), StringComparison.InvariantCultureIgnoreCase)
         )
-      );
+        .ToList();
       MeldungAnzeigen($"nach Inhalt-Filterung: {templates.Count()}");
     }
 
     if (!string.IsNullOrWhiteSpace(ctrlTemplateFilterTags.Text.Trim()))
     {
-      templates = templates.Where(t =>
-        t.Tags.Any(tag => tag.Contains(ctrlTemplateFilterTags.Text.Trim(), StringComparison.InvariantCultureIgnoreCase))
-      );
+      templates = templates
+        .Where(t =>
+          t.Tags.Any(tag =>
+            tag.Contains(ctrlTemplateFilterTags.Text.Trim(), StringComparison.InvariantCultureIgnoreCase)
+          )
+        )
+        .ToList();
       MeldungAnzeigen($"nach Tag-Filterung: {templates.Count()}");
     }
 
     if (ctrlFilterPaket.SelectedItem != null)
     {
-      templates = templates.Where(t => t.Pakete.Any(paket => paket == (Paket)ctrlFilterPaket.SelectedItem));
+      templates = templates.Where(t => t.Pakete.Any(paket => paket == (Paket)ctrlFilterPaket.SelectedItem)).ToList();
       MeldungAnzeigen($"nach Paket-Filterung: {templates.Count()}");
     }
 
     templates = ctrlFilterStatus.Text switch
     {
-      "eingestuft" => templates.Where(t => t.Einstufung is not null),
-      "einzustufen" => templates.Where(t => t.Einstufung is null),
-      _ => templates,
+      "eingestuft" => templates.Where(t => t.Einstufung is not null).ToList(),
+      "einzustufen" => templates.Where(t => t.Einstufung is null).ToList(),
+      _ => templates.ToList(),
     };
 
     MeldungAnzeigen($"nach Status-Filter: {templates.Count()}");
@@ -240,16 +246,16 @@ public partial class MainForm : Form
     ctrlTemplatesListe.ReadOnly = true;
     ctrlTemplatesListe.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToDisplayedHeaders;
     ctrlTemplatesListe.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-    ctrlTemplatesListe.Columns["EditorUri"].Visible = false;
-    ctrlTemplatesListe.Columns["PreviewUri"].Visible = false;
-    ctrlTemplatesListe.Columns["VersionId"].Visible = false;
-    ctrlTemplatesListe.Columns["LastUpdated"].DefaultCellStyle.Format = "dd.MM.yyyy hh:mm";
-    ctrlTemplatesListe.Columns["LastUpdated"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
-    ctrlTemplatesListe.Columns["Skala"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
-    ctrlTemplatesListe.Columns["Klicks"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
-    ctrlTemplatesListe.Columns["Versandt"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
-    ctrlTemplatesListe.Columns["Klickquote"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
-    ctrlTemplatesListe.Columns["Klickquote"].DefaultCellStyle.Format = "p";
+    ctrlTemplatesListe.Columns["EditorUri"]!.Visible = false;
+    ctrlTemplatesListe.Columns["PreviewUri"]!.Visible = false;
+    ctrlTemplatesListe.Columns["VersionId"]!.Visible = false;
+    ctrlTemplatesListe.Columns["LastUpdated"]!.DefaultCellStyle.Format = "dd.MM.yyyy hh:mm";
+    ctrlTemplatesListe.Columns["LastUpdated"]!.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+    ctrlTemplatesListe.Columns["Skala"]!.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+    ctrlTemplatesListe.Columns["Klicks"]!.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+    ctrlTemplatesListe.Columns["Versandt"]!.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+    ctrlTemplatesListe.Columns["Klickquote"]!.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+    ctrlTemplatesListe.Columns["Klickquote"]!.DefaultCellStyle.Format = "p";
   }
 
   private async Task<Result<(string HtmlContent, string PlainContent)>> LadeTemplateInhalt()
@@ -323,11 +329,11 @@ public partial class MainForm : Form
     einzelAnsicht.ZeigeTemplate();
     var speichern = einzelAnsicht.ShowDialog(this);
 
-    if (speichern == DialogResult.Yes)
-    {
-      await _managedTemplateRepository.AktualisiereLokaleKopie(_selektiertesTemplate, CancellationToken.None);
-      AktualisiereTabelle();
-    }
+    if (speichern != DialogResult.Yes)
+      return;
+
+    await _managedTemplateRepository.AktualisiereLokaleKopie(_selektiertesTemplate, CancellationToken.None);
+    AktualisiereTabelle();
   }
 
   private async void ctrlArchivierteTemplate_Click(object sender, EventArgs e)
@@ -348,18 +354,6 @@ public partial class MainForm : Form
 
   private void ctrlTemplatesFiltern_Click(object sender, EventArgs e)
   {
-    AktualisiereTabelle();
-  }
-
-  private void ctrlSortiereNachName_Click(object sender, EventArgs e)
-  {
-    _sortierung = template => template.SendGridTemplate.Name;
-    AktualisiereTabelle();
-  }
-
-  private void ctrlSortiereNachSubject_Click(object sender, EventArgs e)
-  {
-    _sortierung = template => template.SendGridTemplate.Subject;
     AktualisiereTabelle();
   }
 
@@ -469,7 +463,7 @@ public partial class MainForm : Form
 
   private async void ctrlCsvExportCyberLounge_Click(object sender, EventArgs e)
   {
-    if (!BestandsdatenImportiert || _zuordnungen.Count == 0)
+    if (!_bestandsdatenImportiert || _zuordnungen.Count == 0)
     {
       MessageBox.Show("Zuerst die Bestandsdaten importieren!");
       return;
@@ -592,7 +586,7 @@ public partial class MainForm : Form
 
     AktualisiereTabelle();
 
-    BestandsdatenImportiert = true;
+    _bestandsdatenImportiert = true;
   }
 
   private void ValidateImport()
@@ -650,7 +644,7 @@ public partial class MainForm : Form
 
   private async void ctrlKlicksEinlesen_Click(object sender, EventArgs e)
   {
-    if (!BestandsdatenImportiert || _zuordnungen.Count == 0)
+    if (!_bestandsdatenImportiert || _zuordnungen.Count == 0)
     {
       MessageBox.Show("Zuerst die Bestandsdaten importieren!");
       return;
@@ -673,6 +667,7 @@ public partial class MainForm : Form
 
     var klicks = new Dictionary<string, int>();
     var versandt = new Dictionary<string, int>();
+
     foreach (var zeile in zeilen.Skip(1))
     {
       var werte = zeile.Split(";");
@@ -697,19 +692,14 @@ public partial class MainForm : Form
 
       var id = _zuordnungen[templateId];
 
-      if (versandt.ContainsKey(id))
-        template.Versandt = versandt[id];
+      if (versandt.TryGetValue(id, out var value))
+        template.Versandt = value;
 
-      if (klicks.ContainsKey(id))
-        template.Klicks = klicks[id];
+      if (klicks.TryGetValue(id, out var klick))
+        template.Klicks = klick;
     }
 
     AktualisiereTabelle();
-  }
-
-  private void ctrlTemplateFilterPaket_KeyUp(object sender, KeyEventArgs e)
-  {
-    Filtern(e);
   }
 
   private void ctrlTemplateFilterTags_KeyUp(object sender, KeyEventArgs e)

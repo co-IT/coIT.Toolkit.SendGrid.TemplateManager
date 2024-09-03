@@ -17,7 +17,7 @@ public partial class PaketUebersichtForm : Form
 
     foreach (var paket in pakete)
     {
-      var paketName = Enum.GetName(paket);
+      var paketName = Enum.GetName(paket)!;
 
       var templatesInPaket = _alleTemplates
         .Where(t => t.Einstufung?.Klassifizierung != null)
@@ -26,7 +26,7 @@ public partial class PaketUebersichtForm : Form
       var zuordnungen = Enum.GetValues<PhishingMailLevelOfDifficulty>()
         .Select(difficulty =>
         {
-          var aktuelleAnzahl = (byte)templatesInPaket.Count(t => t.Einstufung.Klassifizierung == difficulty);
+          var aktuelleAnzahl = (byte)templatesInPaket.Count(t => t.Einstufung?.Klassifizierung == difficulty);
 
           var benoetigteAnzahl = PaketKonfiguration.Konfiguration[paket][difficulty];
 

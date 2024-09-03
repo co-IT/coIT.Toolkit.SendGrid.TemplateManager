@@ -2,7 +2,7 @@ using System.Diagnostics;
 
 namespace coIT.Toolkit.SendGrid.TemplateManager;
 
-internal class Utils
+internal static class Utils
 {
   public static void OpenInBrowser(string url)
   {

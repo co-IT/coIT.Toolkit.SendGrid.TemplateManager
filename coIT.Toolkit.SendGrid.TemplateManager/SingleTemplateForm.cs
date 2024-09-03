@@ -1,9 +1,7 @@
-using System.Diagnostics;
 using coIT.Libraries.Sendgrid;
 using CSharpFunctionalExtensions;
 using Newtonsoft.Json;
 using SendGrid.Helpers.Mail;
-using static System.Windows.Forms.LinkLabel;
 
 namespace coIT.Toolkit.SendGrid.TemplateManager;
 
@@ -73,7 +71,7 @@ public partial class SingleTemplateForm : Form
       adresse = Template.Absender.Adresse.Split('@', StringSplitOptions.RemoveEmptyEntries).ToList();
 
     ctrlAbsenderadresse.Text = adresse.FirstOrDefault() ?? string.Empty;
-    ctrlDomains.SelectedItem = $"@{adresse.Last() ?? string.Empty}";
+    ctrlDomains.SelectedItem = $"@{adresse.Last()}";
 
     ctrlAbsendername.Text = Template.Absender.Name;
     ctrlCVAlsAbsendername.Checked = Template.Absender.VonCyberVerantwortlichen;
