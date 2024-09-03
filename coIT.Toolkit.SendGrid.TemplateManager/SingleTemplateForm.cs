@@ -25,8 +25,6 @@ public partial class SingleTemplateForm : Form
 
   public async void ZeigeTemplate()
   {
-    await LadeInWebView2(Template.HtmlContent);
-
     var domains = new HashSet<string>
     {
       "bund-und-laender.online",
@@ -59,6 +57,20 @@ public partial class SingleTemplateForm : Form
 
     EinstufungAnzeigen();
     AbsenderAnzeigen();
+    await LadeHtmlPreview();
+  }
+
+  private async Task LadeHtmlPreview()
+  {
+    var result = await _sendGridService.GetTemplateContentsAsync(
+      Template.SendGridTemplate.TemplateId,
+      Template.SendGridTemplate.VersionId
+    );
+
+    if (result.IsFailure)
+      return;
+
+    await LadeInWebView2(result.Value.HtmlContent);
   }
 
   private void AbsenderAnzeigen()

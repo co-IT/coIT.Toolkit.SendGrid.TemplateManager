@@ -63,7 +63,6 @@ namespace coIT.Toolkit.SendGrid.TemplateManager
       ctrlTemplatesLadenAusDatei = new Button();
       ctrlTemplatesLadenVonSendGrid = new Button();
       ctrlAktionen = new GroupBox();
-      ctrlJsonBearbeiten = new Button();
       ctrlTemplateArchivieren = new Button();
       ctrlOeffneEditor = new Button();
       ctrlOeffneWebansicht = new Button();
@@ -76,15 +75,14 @@ namespace coIT.Toolkit.SendGrid.TemplateManager
       tbpEinstellungen = new TabPage();
       groupBox2 = new GroupBox();
       btnEinstellungenSpeichern = new Button();
-      btnDatenbankAuswählen = new Button();
-      tbxDatenbankPfad = new TextBox();
+      tbxDatabaseConnectionString = new TextBox();
       label8 = new Label();
       tbxApiKey = new TextBox();
       label7 = new Label();
-      dlgDatenbankOrdner = new FolderBrowserDialog();
       importFileDialog = new OpenFileDialog();
       klicksFileDialog = new OpenFileDialog();
       exportFolderDialog = new FolderBrowserDialog();
+      groupBox4 = new GroupBox();
       groupBox3.SuspendLayout();
       ctrlPakete.SuspendLayout();
       ctrlTags.SuspendLayout();
@@ -97,6 +95,7 @@ namespace coIT.Toolkit.SendGrid.TemplateManager
       panel1.SuspendLayout();
       tbpEinstellungen.SuspendLayout();
       groupBox2.SuspendLayout();
+      groupBox4.SuspendLayout();
       SuspendLayout();
       // 
       // groupBox3
@@ -501,7 +500,6 @@ namespace coIT.Toolkit.SendGrid.TemplateManager
       // 
       // ctrlAktionen
       // 
-      ctrlAktionen.Controls.Add(ctrlJsonBearbeiten);
       ctrlAktionen.Controls.Add(ctrlTemplateArchivieren);
       ctrlAktionen.Controls.Add(ctrlOeffneEditor);
       ctrlAktionen.Controls.Add(ctrlOeffneWebansicht);
@@ -516,23 +514,12 @@ namespace coIT.Toolkit.SendGrid.TemplateManager
       ctrlAktionen.TabStop = false;
       ctrlAktionen.Text = "Aktionen";
       // 
-      // ctrlJsonBearbeiten
-      // 
-      ctrlJsonBearbeiten.Location = new Point(8, 102);
-      ctrlJsonBearbeiten.Margin = new Padding(2);
-      ctrlJsonBearbeiten.Name = "ctrlJsonBearbeiten";
-      ctrlJsonBearbeiten.Size = new Size(38, 23);
-      ctrlJsonBearbeiten.TabIndex = 8;
-      ctrlJsonBearbeiten.Text = "🖊";
-      ctrlJsonBearbeiten.UseVisualStyleBackColor = true;
-      ctrlJsonBearbeiten.Click += ctrlJsonBearbeiten_Click;
-      // 
       // ctrlTemplateArchivieren
       // 
-      ctrlTemplateArchivieren.Location = new Point(50, 103);
+      ctrlTemplateArchivieren.Location = new Point(8, 103);
       ctrlTemplateArchivieren.Margin = new Padding(2);
       ctrlTemplateArchivieren.Name = "ctrlTemplateArchivieren";
-      ctrlTemplateArchivieren.Size = new Size(83, 23);
+      ctrlTemplateArchivieren.Size = new Size(125, 23);
       ctrlTemplateArchivieren.TabIndex = 7;
       ctrlTemplateArchivieren.Text = "Archivieren";
       ctrlTemplateArchivieren.UseVisualStyleBackColor = true;
@@ -638,6 +625,8 @@ namespace coIT.Toolkit.SendGrid.TemplateManager
       // 
       // tbpEinstellungen
       // 
+      tbpEinstellungen.Controls.Add(groupBox4);
+      tbpEinstellungen.Controls.Add(btnEinstellungenSpeichern);
       tbpEinstellungen.Controls.Add(groupBox2);
       tbpEinstellungen.Location = new Point(4, 24);
       tbpEinstellungen.Name = "tbpEinstellungen";
@@ -649,22 +638,18 @@ namespace coIT.Toolkit.SendGrid.TemplateManager
       // 
       // groupBox2
       // 
-      groupBox2.Controls.Add(btnEinstellungenSpeichern);
-      groupBox2.Controls.Add(btnDatenbankAuswählen);
-      groupBox2.Controls.Add(tbxDatenbankPfad);
-      groupBox2.Controls.Add(label8);
       groupBox2.Controls.Add(tbxApiKey);
       groupBox2.Controls.Add(label7);
-      groupBox2.Location = new Point(8, 29);
+      groupBox2.Location = new Point(8, 15);
       groupBox2.Name = "groupBox2";
-      groupBox2.Size = new Size(491, 180);
+      groupBox2.Size = new Size(485, 68);
       groupBox2.TabIndex = 0;
       groupBox2.TabStop = false;
       groupBox2.Text = "SendGrid";
       // 
       // btnEinstellungenSpeichern
       // 
-      btnEinstellungenSpeichern.Location = new Point(287, 130);
+      btnEinstellungenSpeichern.Location = new Point(8, 200);
       btnEinstellungenSpeichern.Name = "btnEinstellungenSpeichern";
       btnEinstellungenSpeichern.Size = new Size(147, 23);
       btnEinstellungenSpeichern.TabIndex = 5;
@@ -672,36 +657,25 @@ namespace coIT.Toolkit.SendGrid.TemplateManager
       btnEinstellungenSpeichern.UseVisualStyleBackColor = true;
       btnEinstellungenSpeichern.Click += btnEinstellungenSpeichern_Click;
       // 
-      // btnDatenbankAuswählen
+      // tbxDatabaseConnectionString
       // 
-      btnDatenbankAuswählen.Location = new Point(359, 75);
-      btnDatenbankAuswählen.Name = "btnDatenbankAuswählen";
-      btnDatenbankAuswählen.Size = new Size(75, 23);
-      btnDatenbankAuswählen.TabIndex = 4;
-      btnDatenbankAuswählen.Text = "auswählen";
-      btnDatenbankAuswählen.UseVisualStyleBackColor = true;
-      btnDatenbankAuswählen.Click += btnDatenbankAuswählen_Click;
-      // 
-      // tbxDatenbankPfad
-      // 
-      tbxDatenbankPfad.Enabled = false;
-      tbxDatenbankPfad.Location = new Point(84, 75);
-      tbxDatenbankPfad.Name = "tbxDatenbankPfad";
-      tbxDatenbankPfad.Size = new Size(269, 23);
-      tbxDatenbankPfad.TabIndex = 3;
+      tbxDatabaseConnectionString.Location = new Point(121, 33);
+      tbxDatabaseConnectionString.Name = "tbxDatabaseConnectionString";
+      tbxDatabaseConnectionString.Size = new Size(350, 23);
+      tbxDatabaseConnectionString.TabIndex = 3;
       // 
       // label8
       // 
       label8.AutoSize = true;
-      label8.Location = new Point(16, 78);
+      label8.Location = new Point(12, 36);
       label8.Name = "label8";
-      label8.Size = new Size(67, 15);
+      label8.Size = new Size(103, 15);
       label8.TabIndex = 2;
-      label8.Text = "Datenbank:";
+      label8.Text = "ConnectionString:";
       // 
       // tbxApiKey
       // 
-      tbxApiKey.Location = new Point(84, 38);
+      tbxApiKey.Location = new Point(121, 28);
       tbxApiKey.Name = "tbxApiKey";
       tbxApiKey.Size = new Size(350, 23);
       tbxApiKey.TabIndex = 1;
@@ -709,7 +683,7 @@ namespace coIT.Toolkit.SendGrid.TemplateManager
       // label7
       // 
       label7.AutoSize = true;
-      label7.Location = new Point(16, 41);
+      label7.Location = new Point(65, 31);
       label7.Name = "label7";
       label7.Size = new Size(50, 15);
       label7.TabIndex = 0;
@@ -724,6 +698,17 @@ namespace coIT.Toolkit.SendGrid.TemplateManager
       // 
       klicksFileDialog.FileName = "klicks";
       klicksFileDialog.Filter = "csv files (*.csv)|*.csv";
+      // 
+      // groupBox4
+      // 
+      groupBox4.Controls.Add(tbxDatabaseConnectionString);
+      groupBox4.Controls.Add(label8);
+      groupBox4.Location = new Point(8, 99);
+      groupBox4.Name = "groupBox4";
+      groupBox4.Size = new Size(485, 75);
+      groupBox4.TabIndex = 6;
+      groupBox4.TabStop = false;
+      groupBox4.Text = "Datenbank";
       // 
       // MainForm
       // 
@@ -749,6 +734,8 @@ namespace coIT.Toolkit.SendGrid.TemplateManager
       tbpEinstellungen.ResumeLayout(false);
       groupBox2.ResumeLayout(false);
       groupBox2.PerformLayout();
+      groupBox4.ResumeLayout(false);
+      groupBox4.PerformLayout();
       ResumeLayout(false);
     }
 
@@ -783,7 +770,6 @@ namespace coIT.Toolkit.SendGrid.TemplateManager
         private Label label4;
         private Label label5;
         private TextBox ctrlTemplateFilterTags;
-        private Button ctrlJsonBearbeiten;
         private GroupBox groupBox3;
         private Button ctrlImportiereBestandsdaten;
         private Button ctrlCsvExportCyberLounge;
@@ -800,15 +786,14 @@ namespace coIT.Toolkit.SendGrid.TemplateManager
     private Label label8;
     private TextBox tbxApiKey;
     private Label label7;
-    private TextBox tbxDatenbankPfad;
-    private Button btnDatenbankAuswählen;
+    private TextBox tbxDatabaseConnectionString;
     private Button btnEinstellungenSpeichern;
-    private FolderBrowserDialog dlgDatenbankOrdner;
     private DataGridView ctrlTemplatesListe;
     private ListBox ctrlMeldungen;
     private Panel panel1;
     private OpenFileDialog importFileDialog;
     private OpenFileDialog klicksFileDialog;
     private FolderBrowserDialog exportFolderDialog;
+    private GroupBox groupBox4;
   }
 }

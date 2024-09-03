@@ -3,24 +3,28 @@ using coIT.Libraries.ConfigurationManager;
 using coIT.Libraries.ConfigurationManager.Cryptography;
 using coIT.Libraries.ConfigurationManager.Serialization;
 using coIT.Libraries.Sendgrid;
+using coIT.Toolkit.SendGrid.TemplateManager.Configurations;
 using CSharpFunctionalExtensions;
 
 namespace coIT.Toolkit.SendGrid.TemplateManager;
 
 public partial class MainForm : Form
 {
+  private const string? ConnectionStringEnvVariableKey = "COIT_TOOLKIT_DATABASE_CONNECTIONSTRING";
+  private readonly AesCryptographyService _cryptographyService;
+
+  private readonly EnvironmentManager _environmentManager;
+  private readonly SortableBindingList<TabellenEintrag> _tabellenListe = [];
   private List<ManagedTemplate> _alleTemplates = Enumerable.Empty<ManagedTemplate>().ToList();
+  private bool _bestandsdatenImportiert;
   private CancellationTokenSource _cts;
+  private ManagedTemplateRepository _managedTemplateRepository;
 
   private ManagedTemplate _selektiertesTemplate;
   private int _selektierteZeile;
-  private Func<ManagedTemplate, object> _sortierung = t => t.SendGridTemplate.Name;
-  private readonly SortableBindingList<TabellenEintrag> _tabellenListe = [];
-
-  private readonly EnvironmentManager _environmentManager;
-  private ManagedTemplateRepository _managedTemplateRepository;
+  private SendGridConfigurationDataTableRepository _sendGridConfigurationRepository;
   private SendGridService _sendGridService;
-  private bool _bestandsdatenImportiert;
+  private Func<ManagedTemplate, object> _sortierung = t => t.SendGridTemplate.Name;
   private Dictionary<string, string> _zuordnungen = new(); //Zuordnungen TemplateId <-> InterneId
 
   public MainForm(CancellationTokenSource cts)
@@ -29,11 +33,11 @@ public partial class MainForm : Form
 
     _cts = cts;
 
-    var schlüssel =
-      "eyJJdGVtMSI6Ijk2QUttM1JmZEs3OG55NGgxTzUrb1NlVm5PQm1GNnhiTHR3TzRmY3BPckE9IiwiSXRlbTIiOiJZdVo1eC9JdXRWQzg2RXJFRTQzWHF3PT0ifQ==";
-    var cryptographyService = AesCryptographyService.FromKey(schlüssel);
+    var key =
+      "eyJJdGVtMSI6InlLdHdrUDJraEJRbTRTckpEaXFjQWpkM3pBc3NVdG8rSUNrTmFwYUgwbWs9IiwiSXRlbTIiOiJUblRxT1RUbXI3ajBCZlUwTEtnOS9BPT0ifQ==";
+    _cryptographyService = AesCryptographyService.FromKey(key).Value;
     var serializer = new NewtonsoftJsonSerializer();
-    _environmentManager = new EnvironmentManager(cryptographyService.Value, serializer);
+    _environmentManager = new EnvironmentManager(_cryptographyService, serializer);
   }
 
   private void MeldungAnzeigen(string meldung)
@@ -55,8 +59,8 @@ public partial class MainForm : Form
     return await Result
       .Success()
       .Bind(() => _sendGridService.GetTemplatesAsync(ct))
-      .Tap(templates => _managedTemplateRepository.AktualisiereLokaleKopie(templates, ct))
-      .Map(_ => _managedTemplateRepository.LadeAusLokalenKopien(ct))
+      .Tap(templates => _managedTemplateRepository.Update(templates, ct))
+      .Map(_ => _managedTemplateRepository.GetAll(ct))
       .Tap(templates => _alleTemplates = templates)
       .Tap(() => MeldungAnzeigen($"{_alleTemplates.Count} Templates gefunden"));
   }
@@ -80,10 +84,9 @@ public partial class MainForm : Form
         .GetTemplateContentsAsync(templateId, versionId, ct)
         .Tap(inhalt =>
         {
-          template.HtmlContent = inhalt.HtmlContent;
           template.PlainContent = inhalt.PlainContent;
         })
-        .Tap(_ => _managedTemplateRepository.AktualisiereLokaleKopie(template, ct))
+        .Tap(_ => _managedTemplateRepository.Update(template, ct))
         .TapError(FehlerAnzeigen);
 
       verarbeitet += 1;
@@ -115,7 +118,7 @@ public partial class MainForm : Form
     MeldungAnzeigen("Lade Templates aus lokalem Speicher");
 
     _cts = new CancellationTokenSource();
-    _alleTemplates = await _managedTemplateRepository.LadeAusLokalenKopien(_cts.Token);
+    _alleTemplates = await _managedTemplateRepository.GetAll(_cts.Token);
 
     AktualisiereTabelle();
 
@@ -136,9 +139,7 @@ public partial class MainForm : Form
       _tabellenListe.Clear();
 
       foreach (var tabellenEintrag in sortiertUndGefiltert)
-      {
         _tabellenListe.Add(tabellenEintrag);
-      }
 
       _tabellenListe.SortAgain();
 
@@ -166,7 +167,7 @@ public partial class MainForm : Form
     {
       templates = templates
         .Where(t =>
-          (t.SendGridTemplate.Name).Contains(
+          t.SendGridTemplate.Name.Contains(
             ctrlTemplateFilterName.Text.Trim(),
             StringComparison.InvariantCultureIgnoreCase
           )
@@ -180,7 +181,7 @@ public partial class MainForm : Form
     {
       templates = templates
         .Where(t =>
-          (t.SendGridTemplate.Subject).Contains(
+          t.SendGridTemplate.Subject.Contains(
             ctrlTemplateFilterSubject.Text.Trim(),
             StringComparison.InvariantCultureIgnoreCase
           )
@@ -193,7 +194,7 @@ public partial class MainForm : Form
     {
       templates = templates
         .Where(t =>
-          (t.PlainContent).Contains(ctrlTemplateFilterInhalt.Text.Trim(), StringComparison.InvariantCultureIgnoreCase)
+          t.PlainContent.Contains(ctrlTemplateFilterInhalt.Text.Trim(), StringComparison.InvariantCultureIgnoreCase)
         )
         .ToList();
       MeldungAnzeigen($"nach Inhalt-Filterung: {templates.Count()}");
@@ -332,21 +333,20 @@ public partial class MainForm : Form
     if (speichern != DialogResult.Yes)
       return;
 
-    await _managedTemplateRepository.AktualisiereLokaleKopie(_selektiertesTemplate, CancellationToken.None);
+    await _managedTemplateRepository.Update(_selektiertesTemplate, CancellationToken.None);
     AktualisiereTabelle();
   }
 
   private async void ctrlArchivierteTemplate_Click(object sender, EventArgs e)
   {
     _selektiertesTemplate.Archiviert = true;
-    _selektiertesTemplate.HtmlContent = string.Empty;
     _selektiertesTemplate.PlainContent = string.Empty;
     _selektiertesTemplate.Tags = [];
     _selektiertesTemplate.Pakete = [];
     _selektiertesTemplate.Absender = null;
     _selektiertesTemplate.Einstufung = null;
 
-    await _managedTemplateRepository.AktualisiereLokaleKopie(_selektiertesTemplate, CancellationToken.None);
+    await _managedTemplateRepository.Update(_selektiertesTemplate, CancellationToken.None);
     _selektierteZeile = 0;
 
     AktualisiereTabelle();
@@ -391,7 +391,7 @@ public partial class MainForm : Form
     else
       _selektiertesTemplate.Tags = _selektiertesTemplate.Tags.Concat(new[] { tag }).Distinct().OrderBy(t => t).ToList();
 
-    await _managedTemplateRepository.AktualisiereLokaleKopie(_selektiertesTemplate, CancellationToken.None);
+    await _managedTemplateRepository.Update(_selektiertesTemplate, CancellationToken.None);
     AktualisiereTabelle();
   }
 
@@ -413,7 +413,7 @@ public partial class MainForm : Form
         .OrderBy(p => p)
         .ToList();
 
-    await _managedTemplateRepository.AktualisiereLokaleKopie(_selektiertesTemplate, CancellationToken.None);
+    await _managedTemplateRepository.Update(_selektiertesTemplate, CancellationToken.None);
     AktualisiereTabelle();
   }
 
@@ -435,16 +435,6 @@ public partial class MainForm : Form
   private async void ctrlExpertenPaketZuordnen_Click(object sender, EventArgs e)
   {
     await PaketZuordnen(Paket.Experte);
-  }
-
-  private void ctrlJsonBearbeiten_Click(object sender, EventArgs e)
-  {
-    _managedTemplateRepository.EditiereLokaleKopie(_selektiertesTemplate);
-    MessageBox.Show(
-      "Nach dem Editieren müssen die lokalen Daten manuell neugeladen werden.",
-      "Hinweis",
-      MessageBoxButtons.OK
-    );
   }
 
   private void ctrlTemplatesListe_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
@@ -576,7 +566,7 @@ public partial class MainForm : Form
 
       template.Absender = new Absender { Name = absenderName, Adresse = absenderAdresse };
 
-      await _managedTemplateRepository.AktualisiereLokaleKopie(template, CancellationToken.None);
+      await _managedTemplateRepository.Update(template, CancellationToken.None);
       MeldungAnzeigen($"{template.Absender}in Template {template.SendGridTemplate.Name} aktualisiert.");
     }
 
@@ -741,24 +731,48 @@ public partial class MainForm : Form
     ctrlTemplatesListe.InvokeIfRequired(() => ctrlTemplatesListe.DataSource = _tabellenListe);
     ctrlTemplatesListe.InvokeIfRequired(TabelleFormatieren);
 
-    var einstellungenGeladen = await _environmentManager
-      .Get<Einstellungen>()
-      .Tap(einstellungen => _sendGridService = new SendGridService(einstellungen.ApiKey))
-      .Tap(einstellungen =>
-        _managedTemplateRepository = ManagedTemplateRepository.Erstellen(einstellungen.DatenbankPfad)
-      );
+    var databaseConfiguration = await _environmentManager.Get<DatabaseConfiguration>(ConnectionStringEnvVariableKey);
 
-    if (einstellungenGeladen.IsFailure)
+    if (databaseConfiguration.IsFailure)
     {
       MessageBox.Show(
-        "Einstellungen konnten nicht geladen werden. Bitte Ersteinrichtung vornehmen",
-        "Fehler",
+        "Datenbank Konfiguration konnten nicht geladen werden. Bitte Ersteinrichtung vornehmen",
+        "Hinweis",
         MessageBoxButtons.OK,
-        MessageBoxIcon.Error
+        MessageBoxIcon.Information
       );
       tbpManager.Enabled = false;
       tbcManager.SelectedTab = tbpEinstellungen;
+      return;
     }
+
+    var connectionString = databaseConfiguration.Value.ConnectionString;
+    _managedTemplateRepository = new ManagedTemplateRepository(connectionString);
+    tbxDatabaseConnectionString.Text = connectionString;
+
+    _sendGridConfigurationRepository = new SendGridConfigurationDataTableRepository(
+      connectionString,
+      _cryptographyService
+    );
+
+    var sendGridConfiguration = await _sendGridConfigurationRepository.Get();
+
+    if (sendGridConfiguration.IsFailure)
+    {
+      MessageBox.Show(
+        "SendGrid Konfiguration konnten nicht geladen werden. Bitte Ersteinrichtung vornehmen",
+        "Hinweis",
+        MessageBoxButtons.OK,
+        MessageBoxIcon.Information
+      );
+      tbpManager.Enabled = false;
+      tbcManager.SelectedTab = tbpEinstellungen;
+      return;
+    }
+
+    var sendGridApiKey = sendGridConfiguration.Value!.ApiKey;
+    _sendGridService = new SendGridService(sendGridApiKey);
+    tbxApiKey.Text = sendGridApiKey;
   }
 
   private void ctrl_PaketUebersicht_Click(object sender, EventArgs e)
@@ -767,35 +781,47 @@ public partial class MainForm : Form
     paketUebersicht.ShowDialog(this);
   }
 
-  private void btnDatenbankAuswählen_Click(object sender, EventArgs e)
-  {
-    var dialogResult = dlgDatenbankOrdner.ShowDialog();
-
-    if (dialogResult == DialogResult.OK && !string.IsNullOrWhiteSpace(dlgDatenbankOrdner.SelectedPath))
-    {
-      tbxDatenbankPfad.Text = dlgDatenbankOrdner.SelectedPath;
-    }
-  }
-
   private async void btnEinstellungenSpeichern_Click(object sender, EventArgs e)
   {
     btnEinstellungenSpeichern.Enabled = false;
 
-    var einstellungen = new Einstellungen { ApiKey = tbxApiKey.Text, DatenbankPfad = tbxDatenbankPfad.Text };
+    var databaseConfiguration = new DatabaseConfiguration(tbxDatabaseConnectionString.Text);
 
-    var ergebnis = await _environmentManager.Save(einstellungen);
+    var databaseConfigurationResult = await _environmentManager.Save(
+      databaseConfiguration,
+      ConnectionStringEnvVariableKey
+    );
 
-    if (ergebnis.IsFailure)
+    if (databaseConfigurationResult.IsFailure)
     {
-      MessageBox.Show(ergebnis.Error, "Speichern fehlgeschlagen", MessageBoxButtons.OK, MessageBoxIcon.Error);
+      MessageBox.Show(
+        databaseConfigurationResult.Error,
+        "Speichern fehlgeschlagen",
+        MessageBoxButtons.OK,
+        MessageBoxIcon.Error
+      );
+      return;
     }
-    else
+
+    var sendGridConfiguration = new SendGridConfiguration(tbxApiKey.Text);
+
+    var sendGridConfigurationResult = await _sendGridConfigurationRepository.Upsert(sendGridConfiguration);
+
+    if (sendGridConfigurationResult.IsFailure)
     {
-      MessageBox.Show("Konfiguration wurde erfolgreich gespeichert", "Gespeichert");
-      _sendGridService = new SendGridService(einstellungen.ApiKey);
-      _managedTemplateRepository = ManagedTemplateRepository.Erstellen(einstellungen.DatenbankPfad);
-      tbpManager.Enabled = true;
+      MessageBox.Show(
+        sendGridConfigurationResult.Error,
+        "Speichern fehlgeschlagen",
+        MessageBoxButtons.OK,
+        MessageBoxIcon.Error
+      );
+      return;
     }
+
+    MessageBox.Show("Konfiguration wurde erfolgreich gespeichert", "Gespeichert");
+    _sendGridService = new SendGridService(sendGridConfiguration.ApiKey);
+    _managedTemplateRepository = new ManagedTemplateRepository(databaseConfiguration.ConnectionString);
+    tbpManager.Enabled = true;
 
     btnEinstellungenSpeichern.Enabled = true;
   }

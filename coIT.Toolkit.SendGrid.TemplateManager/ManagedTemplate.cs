@@ -1,4 +1,5 @@
 using System.Text;
+using Azure;
 using coIT.Libraries.Sendgrid.Contracts;
 using Newtonsoft.Json;
 
@@ -7,7 +8,6 @@ namespace coIT.Toolkit.SendGrid.TemplateManager;
 public record ManagedTemplate(SendGridTemplate SendGridTemplate)
 {
   public SendGridTemplate SendGridTemplate { get; set; } = SendGridTemplate;
-  public string HtmlContent { get; set; } = string.Empty;
   public string PlainContent { get; set; } = string.Empty;
 
   public List<string> Tags { get; set; } = [];
@@ -22,6 +22,12 @@ public record ManagedTemplate(SendGridTemplate SendGridTemplate)
 
   [JsonIgnore]
   public int Klicks { get; set; }
+
+  [JsonIgnore]
+  public DateTimeOffset? Timestamp { get; set; }
+
+  [JsonIgnore]
+  public ETag ETag { get; set; }
 
   public TabellenEintrag ToTabellenEintrag()
   {

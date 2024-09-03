@@ -1,73 +1,57 @@
-using System.Diagnostics;
-using System.Text;
+using Azure.Data.Tables;
 using coIT.Libraries.Sendgrid.Contracts;
-using Newtonsoft.Json;
 
 namespace coIT.Toolkit.SendGrid.TemplateManager;
 
 public class ManagedTemplateRepository
 {
-  private readonly string _pfad;
+  private readonly TableClient _tableClient;
 
-  public static ManagedTemplateRepository Erstellen(string pfad)
+  public ManagedTemplateRepository(string connectionString)
   {
-    return new ManagedTemplateRepository(pfad);
+    _tableClient = new TableClient(connectionString, ManagedTemplateEntity.TabellenName);
+    _tableClient.CreateIfNotExists();
   }
 
-  private ManagedTemplateRepository(string pfad)
-  {
-    _pfad = pfad;
-  }
-
-  public async Task<List<ManagedTemplate>> LadeAusLokalenKopien(CancellationToken ct)
+  public async Task<List<ManagedTemplate>> GetAll(CancellationToken ct)
   {
     var templates = new List<ManagedTemplate>();
 
-    if (!Directory.Exists(_pfad))
-      return templates;
+    var templateEntities = _tableClient.QueryAsync<ManagedTemplateEntity>(cancellationToken: ct);
 
-    var gespeicherteTemplates = Directory.GetFiles(_pfad, "*.json", SearchOption.TopDirectoryOnly);
-
-    foreach (var gespeichertesTemplate in gespeicherteTemplates)
+    await foreach (var entity in templateEntities)
     {
-      if (ct.IsCancellationRequested)
-        return templates;
-
-      var template = await LadeAusLokalerKopie(gespeichertesTemplate, ct);
-      templates.Add(template!);
+      var template = ManagedTemplateMapper.FromEntity(entity);
+      templates.Add(template);
     }
 
     return templates;
   }
 
-  private static async Task<ManagedTemplate?> LadeAusLokalerKopie(string file, CancellationToken ct)
+  public async Task<ManagedTemplate?> Find(string sendGridTemplateId, CancellationToken ct)
   {
-    if (!File.Exists(file))
+    var templateEntity = await _tableClient.GetEntityIfExistsAsync<ManagedTemplateEntity>(
+      ManagedTemplateEntity.TabellenName,
+      sendGridTemplateId,
+      cancellationToken: ct
+    );
+
+    if (!templateEntity.HasValue)
       return null;
 
-    var content = await File.ReadAllTextAsync(file, Encoding.UTF8, ct);
-    var managedTemplate = JsonConvert.DeserializeObject<ManagedTemplate>(content);
-    return managedTemplate;
+    return ManagedTemplateMapper.FromEntity(templateEntity.Value!);
   }
 
-  public async Task AktualisiereLokaleKopien(IEnumerable<ManagedTemplate> templates, CancellationToken ct)
+  public async Task Update(ManagedTemplate template, CancellationToken ct)
   {
-    foreach (var template in templates)
-    {
-      if (ct.IsCancellationRequested)
-        return;
+    var entity = ManagedTemplateMapper.ToEntity(template);
 
-      await AktualisiereLokaleKopie(template, ct);
-    }
+    var response = await _tableClient.UpsertEntityAsync(entity, cancellationToken: ct);
+
+    //TODO handle concurrency problems
   }
 
-  public async Task AktualisiereLokaleKopie(ManagedTemplate template, CancellationToken ct)
-  {
-    var content = JsonConvert.SerializeObject(template);
-    await File.WriteAllTextAsync(Filepath(template.SendGridTemplate), content, Encoding.UTF8, ct);
-  }
-
-  public async Task AktualisiereLokaleKopie(IEnumerable<SendGridTemplate> templates, CancellationToken ct)
+  public async Task Update(IEnumerable<SendGridTemplate> templates, CancellationToken ct)
   {
     foreach (var template in templates)
     {
@@ -76,10 +60,9 @@ public class ManagedTemplateRepository
 
       var managedTemplate = new ManagedTemplate(template);
 
-      var existing = await LadeAusLokalerKopie(Filepath(template), ct);
+      var existing = await Find(managedTemplate.SendGridTemplate.TemplateId, ct);
       if (existing != null)
       {
-        managedTemplate.HtmlContent = string.Empty;
         managedTemplate.PlainContent = string.Empty;
         managedTemplate.Tags = existing.Tags;
         managedTemplate.Pakete = existing.Pakete;
@@ -88,32 +71,7 @@ public class ManagedTemplateRepository
         managedTemplate.Archiviert = existing.Archiviert;
       }
 
-      await AktualisiereLokaleKopie(managedTemplate, ct);
+      await Update(managedTemplate, ct);
     }
-  }
-
-  private string Filepath(SendGridTemplate template)
-  {
-    return Path.Combine(_pfad, Filename(template.TemplateId));
-  }
-
-  private static string Filename(string templateId)
-  {
-    return $"{templateId}.json";
-  }
-
-  public void EditiereLokaleKopie(ManagedTemplate template)
-  {
-    var file = Filepath(template.SendGridTemplate);
-
-    var psi = new ProcessStartInfo("notepad.exe")
-    {
-      Arguments = file,
-      UseShellExecute = false,
-      WindowStyle = ProcessWindowStyle.Hidden,
-      CreateNoWindow = false,
-    };
-
-    Process.Start(psi);
   }
 }

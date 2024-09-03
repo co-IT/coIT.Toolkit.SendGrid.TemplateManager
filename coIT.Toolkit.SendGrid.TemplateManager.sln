@@ -5,6 +5,8 @@ VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "coIT.Toolkit.SendGrid.TemplateManager", "coIT.Toolkit.SendGrid.TemplateManager\coIT.Toolkit.SendGrid.TemplateManager.csproj", "{C1C23A7D-F561-4B89-869A-C9A1E3131A48}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "coIT.Toolkit.SendGrid.TemplateManager.Migrations", "coIT.Toolkit.SendGrid.TemplateManager.Migrations\coIT.Toolkit.SendGrid.TemplateManager.Migrations.csproj", "{BF889126-7E4D-4982-A7E6-77F578575193}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{C1C23A7D-F561-4B89-869A-C9A1E3131A48}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C1C23A7D-F561-4B89-869A-C9A1E3131A48}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C1C23A7D-F561-4B89-869A-C9A1E3131A48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF889126-7E4D-4982-A7E6-77F578575193}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF889126-7E4D-4982-A7E6-77F578575193}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF889126-7E4D-4982-A7E6-77F578575193}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF889126-7E4D-4982-A7E6-77F578575193}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
