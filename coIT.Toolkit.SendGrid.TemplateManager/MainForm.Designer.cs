@@ -73,16 +73,16 @@ namespace coIT.Toolkit.SendGrid.TemplateManager
       panel1 = new Panel();
       ctrlMeldungen = new ListBox();
       tbpEinstellungen = new TabPage();
-      groupBox2 = new GroupBox();
-      btnEinstellungenSpeichern = new Button();
+      groupBox4 = new GroupBox();
       tbxDatabaseConnectionString = new TextBox();
       label8 = new Label();
+      btnEinstellungenSpeichern = new Button();
+      groupBox2 = new GroupBox();
       tbxApiKey = new TextBox();
       label7 = new Label();
       importFileDialog = new OpenFileDialog();
       klicksFileDialog = new OpenFileDialog();
       exportFolderDialog = new FolderBrowserDialog();
-      groupBox4 = new GroupBox();
       groupBox3.SuspendLayout();
       ctrlPakete.SuspendLayout();
       ctrlTags.SuspendLayout();
@@ -94,8 +94,8 @@ namespace coIT.Toolkit.SendGrid.TemplateManager
       ((System.ComponentModel.ISupportInitialize)ctrlTemplatesListe).BeginInit();
       panel1.SuspendLayout();
       tbpEinstellungen.SuspendLayout();
-      groupBox2.SuspendLayout();
       groupBox4.SuspendLayout();
+      groupBox2.SuspendLayout();
       SuspendLayout();
       // 
       // groupBox3
@@ -591,7 +591,7 @@ namespace coIT.Toolkit.SendGrid.TemplateManager
       ctrlTemplatesListe.Margin = new Padding(2);
       ctrlTemplatesListe.Name = "ctrlTemplatesListe";
       ctrlTemplatesListe.RowHeadersWidth = 62;
-      ctrlTemplatesListe.Size = new Size(1440, 510);
+      ctrlTemplatesListe.Size = new Size(1440, 420);
       ctrlTemplatesListe.TabIndex = 0;
       ctrlTemplatesListe.CellMouseUp += ctrlTemplatesListe_CellMouseUp;
       ctrlTemplatesListe.RowStateChanged += ctrlTemplatesListe_RowStateChanged;
@@ -616,11 +616,11 @@ namespace coIT.Toolkit.SendGrid.TemplateManager
       ctrlMeldungen.Dock = DockStyle.Bottom;
       ctrlMeldungen.FormattingEnabled = true;
       ctrlMeldungen.ItemHeight = 15;
-      ctrlMeldungen.Location = new Point(3, 694);
+      ctrlMeldungen.Location = new Point(3, 604);
       ctrlMeldungen.Margin = new Padding(2);
       ctrlMeldungen.Name = "ctrlMeldungen";
       ctrlMeldungen.ScrollAlwaysVisible = true;
-      ctrlMeldungen.Size = new Size(1440, 79);
+      ctrlMeldungen.Size = new Size(1440, 169);
       ctrlMeldungen.TabIndex = 11;
       // 
       // tbpEinstellungen
@@ -636,26 +636,16 @@ namespace coIT.Toolkit.SendGrid.TemplateManager
       tbpEinstellungen.Text = "Einstellungen";
       tbpEinstellungen.UseVisualStyleBackColor = true;
       // 
-      // groupBox2
+      // groupBox4
       // 
-      groupBox2.Controls.Add(tbxApiKey);
-      groupBox2.Controls.Add(label7);
-      groupBox2.Location = new Point(8, 15);
-      groupBox2.Name = "groupBox2";
-      groupBox2.Size = new Size(485, 68);
-      groupBox2.TabIndex = 0;
-      groupBox2.TabStop = false;
-      groupBox2.Text = "SendGrid";
-      // 
-      // btnEinstellungenSpeichern
-      // 
-      btnEinstellungenSpeichern.Location = new Point(8, 200);
-      btnEinstellungenSpeichern.Name = "btnEinstellungenSpeichern";
-      btnEinstellungenSpeichern.Size = new Size(147, 23);
-      btnEinstellungenSpeichern.TabIndex = 5;
-      btnEinstellungenSpeichern.Text = "Einstellungen speichern";
-      btnEinstellungenSpeichern.UseVisualStyleBackColor = true;
-      btnEinstellungenSpeichern.Click += btnEinstellungenSpeichern_Click;
+      groupBox4.Controls.Add(tbxDatabaseConnectionString);
+      groupBox4.Controls.Add(label8);
+      groupBox4.Location = new Point(8, 99);
+      groupBox4.Name = "groupBox4";
+      groupBox4.Size = new Size(485, 75);
+      groupBox4.TabIndex = 6;
+      groupBox4.TabStop = false;
+      groupBox4.Text = "Datenbank";
       // 
       // tbxDatabaseConnectionString
       // 
@@ -672,6 +662,27 @@ namespace coIT.Toolkit.SendGrid.TemplateManager
       label8.Size = new Size(103, 15);
       label8.TabIndex = 2;
       label8.Text = "ConnectionString:";
+      // 
+      // btnEinstellungenSpeichern
+      // 
+      btnEinstellungenSpeichern.Location = new Point(8, 200);
+      btnEinstellungenSpeichern.Name = "btnEinstellungenSpeichern";
+      btnEinstellungenSpeichern.Size = new Size(147, 23);
+      btnEinstellungenSpeichern.TabIndex = 5;
+      btnEinstellungenSpeichern.Text = "Einstellungen speichern";
+      btnEinstellungenSpeichern.UseVisualStyleBackColor = true;
+      btnEinstellungenSpeichern.Click += btnEinstellungenSpeichern_Click;
+      // 
+      // groupBox2
+      // 
+      groupBox2.Controls.Add(tbxApiKey);
+      groupBox2.Controls.Add(label7);
+      groupBox2.Location = new Point(8, 15);
+      groupBox2.Name = "groupBox2";
+      groupBox2.Size = new Size(485, 68);
+      groupBox2.TabIndex = 0;
+      groupBox2.TabStop = false;
+      groupBox2.Text = "SendGrid";
       // 
       // tbxApiKey
       // 
@@ -699,17 +710,6 @@ namespace coIT.Toolkit.SendGrid.TemplateManager
       klicksFileDialog.FileName = "klicks";
       klicksFileDialog.Filter = "csv files (*.csv)|*.csv";
       // 
-      // groupBox4
-      // 
-      groupBox4.Controls.Add(tbxDatabaseConnectionString);
-      groupBox4.Controls.Add(label8);
-      groupBox4.Location = new Point(8, 99);
-      groupBox4.Name = "groupBox4";
-      groupBox4.Size = new Size(485, 75);
-      groupBox4.TabIndex = 6;
-      groupBox4.TabStop = false;
-      groupBox4.Text = "Datenbank";
-      // 
       // MainForm
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
@@ -732,10 +732,10 @@ namespace coIT.Toolkit.SendGrid.TemplateManager
       ((System.ComponentModel.ISupportInitialize)ctrlTemplatesListe).EndInit();
       panel1.ResumeLayout(false);
       tbpEinstellungen.ResumeLayout(false);
-      groupBox2.ResumeLayout(false);
-      groupBox2.PerformLayout();
       groupBox4.ResumeLayout(false);
       groupBox4.PerformLayout();
+      groupBox2.ResumeLayout(false);
+      groupBox2.PerformLayout();
       ResumeLayout(false);
     }
 

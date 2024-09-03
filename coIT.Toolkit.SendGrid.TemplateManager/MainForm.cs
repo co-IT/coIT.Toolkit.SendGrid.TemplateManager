@@ -54,7 +54,7 @@ public partial class MainForm : Form
 
   private async Task<Result> LadeTemplatesOhneInhalte(CancellationToken ct)
   {
-    MeldungAnzeigen("Lade Templates von SendGrid ohne Inhalte");
+    MeldungAnzeigen("Lade Templates von SendGrid ohne Inhalte...");
 
     return await Result
       .Success()
@@ -62,12 +62,12 @@ public partial class MainForm : Form
       .Tap(templates => _managedTemplateRepository.Update(templates, ct))
       .Map(_ => _managedTemplateRepository.GetAll(ct))
       .Tap(templates => _alleTemplates = templates)
-      .Tap(() => MeldungAnzeigen($"{_alleTemplates.Count} Templates gefunden"));
+      .Tap(() => MeldungAnzeigen($"{_alleTemplates.Count} Templates von SendGrid geladen!"));
   }
 
   private async Task<Result> LadeInhalteVonTemplates(CancellationToken ct)
   {
-    MeldungAnzeigen("Lade Inhalte asynchron nach.");
+    MeldungAnzeigen("Lade Inhalte der Templates asynchron nach...");
 
     var gesamt = _alleTemplates.Count;
     var verarbeitet = 0;
@@ -91,15 +91,15 @@ public partial class MainForm : Form
 
       verarbeitet += 1;
       if (prozente.TryGetValue(verarbeitet, out var prozent))
-        MeldungAnzeigen($"{prozent:N0}% der Inhalte geladen");
+        MeldungAnzeigen($"{prozent:N0}% der Inhalte geladen...");
 
       if (ct.IsCancellationRequested)
-        return Result.Failure("Aktion abgebrochen");
+        return Result.Failure("Aktion abgebrochen!");
 
       await Task.Delay(250, ct);
     }
 
-    MeldungAnzeigen("Inhalte erfolgreich nachgeladen.");
+    MeldungAnzeigen("Inhalte erfolgreich nachgeladen!");
     return Result.Success();
   }
 
@@ -115,14 +115,14 @@ public partial class MainForm : Form
 
   private async void LadeTemplatesAusLokalemSpeicher(object sender, EventArgs e)
   {
-    MeldungAnzeigen("Lade Templates aus lokalem Speicher");
+    MeldungAnzeigen("Lade Templates aus lokalem Speicher...");
 
     _cts = new CancellationTokenSource();
     _alleTemplates = await _managedTemplateRepository.GetAll(_cts.Token);
 
     AktualisiereTabelle();
 
-    MeldungAnzeigen("Templates geladen");
+    MeldungAnzeigen("Templates aus lokalem Speicher geladen!");
 
     ctrl_PaketUebersicht.Enabled = true;
   }
@@ -158,10 +158,12 @@ public partial class MainForm : Form
   private List<ManagedTemplate> FilterAnwenden()
   {
     IEnumerable<ManagedTemplate> templates = _alleTemplates;
-    MeldungAnzeigen($"Templates insgesamt: {templates.Count()}");
+    MeldungAnzeigen($"Filter angewandt:");
+
+    MeldungAnzeigen($"\t- Templates insgesamt: {templates.Count()}");
 
     templates = templates.Where(t => !t.Archiviert).ToList();
-    MeldungAnzeigen($"ohne archivierte Templates: {templates.Count()}");
+    MeldungAnzeigen($"\t- ohne archivierte Templates: {templates.Count()}");
 
     if (!string.IsNullOrWhiteSpace(ctrlTemplateFilterName.Text.Trim()))
     {
@@ -174,7 +176,7 @@ public partial class MainForm : Form
         )
         .ToList();
 
-      MeldungAnzeigen($"nach Namen-Filterung: {templates.Count()}");
+      MeldungAnzeigen($"\t- nach Namen-Filterung: {templates.Count()}");
     }
 
     if (!string.IsNullOrWhiteSpace(ctrlTemplateFilterSubject.Text.Trim()))
@@ -187,7 +189,7 @@ public partial class MainForm : Form
           )
         )
         .ToList();
-      MeldungAnzeigen($"nach Subject-Filterung: {templates.Count()}");
+      MeldungAnzeigen($"\t- nach Subject-Filterung: {templates.Count()}");
     }
 
     if (!string.IsNullOrWhiteSpace(ctrlTemplateFilterInhalt.Text.Trim()))
@@ -197,7 +199,7 @@ public partial class MainForm : Form
           t.PlainContent.Contains(ctrlTemplateFilterInhalt.Text.Trim(), StringComparison.InvariantCultureIgnoreCase)
         )
         .ToList();
-      MeldungAnzeigen($"nach Inhalt-Filterung: {templates.Count()}");
+      MeldungAnzeigen($"\t- nach Inhalt-Filterung: {templates.Count()}");
     }
 
     if (!string.IsNullOrWhiteSpace(ctrlTemplateFilterTags.Text.Trim()))
@@ -209,13 +211,13 @@ public partial class MainForm : Form
           )
         )
         .ToList();
-      MeldungAnzeigen($"nach Tag-Filterung: {templates.Count()}");
+      MeldungAnzeigen($"\t- nach Tag-Filterung: {templates.Count()}");
     }
 
     if (ctrlFilterPaket.SelectedItem != null)
     {
       templates = templates.Where(t => t.Pakete.Any(paket => paket == (Paket)ctrlFilterPaket.SelectedItem)).ToList();
-      MeldungAnzeigen($"nach Paket-Filterung: {templates.Count()}");
+      MeldungAnzeigen($"\t- nach Paket-Filterung: {templates.Count()}");
     }
 
     templates = ctrlFilterStatus.Text switch
@@ -225,9 +227,9 @@ public partial class MainForm : Form
       _ => templates.ToList(),
     };
 
-    MeldungAnzeigen($"nach Status-Filter: {templates.Count()}");
+    MeldungAnzeigen($"\t- nach Status-Filter: {templates.Count()}");
 
-    MeldungAnzeigen($"insgesamt nach Filterung: {templates.Count()}");
+    MeldungAnzeigen($"\t- insgesamt nach Filterung: {templates.Count()}");
     return templates.ToList();
   }
 
