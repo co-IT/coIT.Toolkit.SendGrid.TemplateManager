@@ -6,8 +6,9 @@ Anwendung zur Verwaltung von SendGrid Templates für Cyber Produkte
 
 ### Ersteinrichtung
 
-1. .msi Datei von GitHub Releases herunterladen und installieren
-2. SendGrid-ApiKey und Datenbankpfad in Konfiguration hinterlegen
+`.msi`-Datei von [GitHub Releases](https://github.com/co-IT/coIT.Toolkit.SendGrid.TemplateManager/releases) herunterladen und installieren
+
+Wichtig: Es muss der verschlüsselte Datenbank ConnectionString als Umgebungsvariable `COIT_TOOLKIT_DATABASE_CONNECTIONSTRING` zur Verfügung stehen.
 
 ### Updates
 
