@@ -10,6 +10,7 @@ public record ManagedTemplateEntity : ITableEntity
 
   [IgnoreDataMember]
   public required string SendGridTemplateId { get; init; }
+
   public required string Json { get; init; }
 
   public string PartitionKey

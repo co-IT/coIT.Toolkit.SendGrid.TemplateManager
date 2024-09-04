@@ -18,6 +18,7 @@ public record TabellenEintrag
   public string Schwierigkeit { get; set; }
 
   public decimal Klickquote => Versandt == 0 ? 0 : Klicks / (decimal)Versandt; //Versandt <= 0 ? "-" : $"{(Klicks / (decimal)Versandt):P}";
+
   public int Versandt { get; set; }
   public int Klicks { get; set; }
 

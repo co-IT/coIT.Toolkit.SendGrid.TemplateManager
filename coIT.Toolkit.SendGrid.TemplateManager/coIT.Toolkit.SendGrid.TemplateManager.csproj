@@ -10,13 +10,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azure.Data.Tables" Version="12.9.0" />
-    <PackageReference Include="coIT.Libraries.ConfigurationManager" Version="1.1.0" />
-    <PackageReference Include="coIT.Libraries.Sendgrid" Version="3.0.0" />
-    <PackageReference Include="CSharpFunctionalExtensions" Version="2.42.5" />
-    <PackageReference Include="Dapper" Version="2.1.35" />
-    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2365.46" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
+    <PackageReference Include="Azure.Data.Tables" Version="12.9.0"/>
+    <PackageReference Include="coIT.Libraries.ConfigurationManager" Version="1.1.0"/>
+    <PackageReference Include="coIT.Libraries.Sendgrid" Version="3.0.0"/>
+    <PackageReference Include="CSharpFunctionalExtensions" Version="2.42.5"/>
+    <PackageReference Include="Dapper" Version="2.1.35"/>
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2365.46"/>
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.6"/>
   </ItemGroup>
 
 </Project>

@@ -158,7 +158,7 @@ public partial class MainForm : Form
   private List<ManagedTemplate> FilterAnwenden()
   {
     IEnumerable<ManagedTemplate> templates = _alleTemplates;
-    MeldungAnzeigen($"Filter angewandt:");
+    MeldungAnzeigen("Filter angewandt:");
 
     MeldungAnzeigen($"\t- Templates insgesamt: {templates.Count()}");
 

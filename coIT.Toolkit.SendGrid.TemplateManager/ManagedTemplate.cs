@@ -86,29 +86,29 @@ public record ManagedTemplate(SendGridTemplate SendGridTemplate)
     var sb = new StringBuilder();
 
     var templateSql = $"""
-      MERGE INTO [dbo].[PhishingMailTemplates] AS target
-      USING (VALUES
-          ('{interneTemplateId}', '{SendGridTemplate.TemplateId}', '{SendGridTemplate.Name.Trim()}', '{Absender.Adresse.Trim()}', '{Absender.Name.Trim()}', {(int)
-        Einstufung.Klassifizierung}, 1, 1, '{SendGridTemplate.LastUpdated:O}', 'https://{Einstufung.TrackingLinkDomain.Trim()}/{Einstufung.TrackingLinkPfad.TrimStart(
-        ' ',
-        '/'
-      )}')
-      ) AS source ([Id], [TemplateId], [Title], [SenderEmail], [SenderName], [LevelOfDifficulty], [BusinessSector], [Department], [Created], [Link])
-      ON target.[Id] = source.[Id]
-      WHEN MATCHED THEN
-          UPDATE SET
-              target.[TemplateId] = source.[TemplateId],
-              target.[Title] = source.[Title],
-              target.[SenderEmail] = source.[SenderEmail],
-              target.[SenderName] = source.[SenderName],
-              target.[LevelOfDifficulty] = source.[LevelOfDifficulty],
-              target.[BusinessSector] = source.[BusinessSector],
-              target.[Department] = source.[Department],
-              target.[Link] = source.[Link]
-      WHEN NOT MATCHED THEN
-          INSERT ([Id], [TemplateId], [Title], [SenderEmail], [SenderName], [LevelOfDifficulty], [BusinessSector], [Department], [Created], [Link])
-          VALUES (source.[Id], source.[TemplateId], source.[Title], source.[SenderEmail], source.[SenderName], source.[LevelOfDifficulty], source.[BusinessSector], source.[Department], source.[Created], source.[Link]);
-      """;
+                       MERGE INTO [dbo].[PhishingMailTemplates] AS target
+                       USING (VALUES
+                           ('{interneTemplateId}', '{SendGridTemplate.TemplateId}', '{SendGridTemplate.Name.Trim()}', '{Absender.Adresse.Trim()}', '{Absender.Name.Trim()}', {(int)
+                             Einstufung.Klassifizierung}, 1, 1, '{SendGridTemplate.LastUpdated:O}', 'https://{Einstufung.TrackingLinkDomain.Trim()}/{Einstufung.TrackingLinkPfad.TrimStart(
+                             ' ',
+                             '/'
+                           )}')
+                       ) AS source ([Id], [TemplateId], [Title], [SenderEmail], [SenderName], [LevelOfDifficulty], [BusinessSector], [Department], [Created], [Link])
+                       ON target.[Id] = source.[Id]
+                       WHEN MATCHED THEN
+                           UPDATE SET
+                               target.[TemplateId] = source.[TemplateId],
+                               target.[Title] = source.[Title],
+                               target.[SenderEmail] = source.[SenderEmail],
+                               target.[SenderName] = source.[SenderName],
+                               target.[LevelOfDifficulty] = source.[LevelOfDifficulty],
+                               target.[BusinessSector] = source.[BusinessSector],
+                               target.[Department] = source.[Department],
+                               target.[Link] = source.[Link]
+                       WHEN NOT MATCHED THEN
+                           INSERT ([Id], [TemplateId], [Title], [SenderEmail], [SenderName], [LevelOfDifficulty], [BusinessSector], [Department], [Created], [Link])
+                           VALUES (source.[Id], source.[TemplateId], source.[Title], source.[SenderEmail], source.[SenderName], source.[LevelOfDifficulty], source.[BusinessSector], source.[Department], source.[Created], source.[Link]);
+                       """;
 
     sb.AppendLine(templateSql);
 

@@ -26,24 +26,12 @@ public class SortableBindingList<T> : BindingList<T>
   /// <summary>
   ///   Initializes a new instance of the <see cref="SortableBindingList{T}" /> class.
   /// </summary>
-  /// <param name="list">An <see cref="T:System.Collections.Generic.IList`1" /> of items to be contained in the <see cref="T:System.ComponentModel.BindingList`1" />.</param>
+  /// <param name="list">
+  ///   An <see cref="T:System.Collections.Generic.IList`1" /> of items to be contained in the
+  ///   <see cref="T:System.ComponentModel.BindingList`1" />.
+  /// </param>
   public SortableBindingList(IList<T> list)
     : base(list) { }
-
-  public void SortAgain()
-  {
-    if (!_isSorted)
-      return;
-
-    if (Items is not List<T> list)
-      return;
-
-    list.Sort(Compare);
-
-    _isSorted = true;
-    //fire an event that the list has been changed.
-    OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
-  }
 
   /// <summary>
   ///   Gets a value indicating whether the list supports sorting.
@@ -61,9 +49,25 @@ public class SortableBindingList<T> : BindingList<T>
   protected override ListSortDirection SortDirectionCore => _sortDirection;
 
   /// <summary>
-  ///   Gets the property descriptor that is used for sorting the list if sorting is implemented in a derived class; otherwise, returns null
+  ///   Gets the property descriptor that is used for sorting the list if sorting is implemented in a derived class;
+  ///   otherwise, returns null
   /// </summary>
   protected override PropertyDescriptor SortPropertyCore => _sortProperty;
+
+  public void SortAgain()
+  {
+    if (!_isSorted)
+      return;
+
+    if (Items is not List<T> list)
+      return;
+
+    list.Sort(Compare);
+
+    _isSorted = true;
+    //fire an event that the list has been changed.
+    OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
+  }
 
   /// <summary>
   ///   Removes any sort applied with ApplySortCore if sorting is implemented

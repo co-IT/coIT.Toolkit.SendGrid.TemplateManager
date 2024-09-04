@@ -17,11 +17,13 @@ public record SendGridConfigurationEntity : ITableEntity
     get => TabellenName;
     set { }
   }
+
   public string RowKey
   {
     get => GlobalIdentifier;
     set { }
   }
+
   public DateTimeOffset? Timestamp { get; set; }
   public ETag ETag { get; set; }
 }
